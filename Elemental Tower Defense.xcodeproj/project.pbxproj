@@ -14,6 +14,8 @@
 		041EA72B1C99F77D00DF9631 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041EA7291C99F77D00DF9631 /* Main.storyboard */; };
 		041EA72D1C99F77D00DF9631 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 041EA72C1C99F77D00DF9631 /* Assets.xcassets */; };
 		041EA7301C99F77D00DF9631 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041EA72E1C99F77D00DF9631 /* LaunchScreen.storyboard */; };
+		048C38A81C9A375300AABE66 /* LevelOne.sks in Resources */ = {isa = PBXBuildFile; fileRef = 048C38A71C9A375300AABE66 /* LevelOne.sks */; };
+		048C38AA1C9A375E00AABE66 /* LevelOne.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048C38A91C9A375E00AABE66 /* LevelOne.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +28,8 @@
 		041EA72C1C99F77D00DF9631 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		041EA72F1C99F77D00DF9631 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		041EA7311C99F77D00DF9631 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		048C38A71C9A375300AABE66 /* LevelOne.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = LevelOne.sks; sourceTree = "<group>"; };
+		048C38A91C9A375E00AABE66 /* LevelOne.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelOne.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +65,8 @@
 				041EA7211C99F77C00DF9631 /* AppDelegate.swift */,
 				041EA7231C99F77C00DF9631 /* GameScene.sks */,
 				041EA7251C99F77C00DF9631 /* GameScene.swift */,
+				048C38A71C9A375300AABE66 /* LevelOne.sks */,
+				048C38A91C9A375E00AABE66 /* LevelOne.swift */,
 				041EA7271C99F77D00DF9631 /* GameViewController.swift */,
 				041EA7291C99F77D00DF9631 /* Main.storyboard */,
 				041EA72C1C99F77D00DF9631 /* Assets.xcassets */,
@@ -128,6 +134,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				048C38A81C9A375300AABE66 /* LevelOne.sks in Resources */,
 				041EA7241C99F77C00DF9631 /* GameScene.sks in Resources */,
 				041EA7301C99F77D00DF9631 /* LaunchScreen.storyboard in Resources */,
 				041EA72D1C99F77D00DF9631 /* Assets.xcassets in Resources */,
@@ -145,6 +152,7 @@
 				041EA7261C99F77C00DF9631 /* GameScene.swift in Sources */,
 				041EA7281C99F77D00DF9631 /* GameViewController.swift in Sources */,
 				041EA7221C99F77C00DF9631 /* AppDelegate.swift in Sources */,
+				048C38AA1C9A375E00AABE66 /* LevelOne.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,6 +266,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "Elemental Tower Defense/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Polturonduken.Elemental-Tower-Defense";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -269,6 +278,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "Elemental Tower Defense/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Polturonduken.Elemental-Tower-Defense";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -294,6 +304,7 @@
 				041EA7361C99F77D00DF9631 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

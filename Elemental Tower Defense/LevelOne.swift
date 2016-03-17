@@ -1,14 +1,14 @@
 //
-//  GameScene.swift
+//  LevelOne.swift
 //  Elemental Tower Defense
 //
 //  Created by Andrew Turley on 3/16/16.
-//  Copyright (c) 2016 Polturonduken. All rights reserved.
+//  Copyright © 2016 Polturonduken. All rights reserved.
 //
 
 import SpriteKit
 
-class GameScene: SKScene {
+class LevelOne: SKScene {
     let screenSize: CGRect = UIScreen.mainScreen().bounds
     var screenWidth : CGFloat = 0
     var screenHeight : CGFloat = 0
