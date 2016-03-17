@@ -16,6 +16,7 @@
 		041EA7301C99F77D00DF9631 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041EA72E1C99F77D00DF9631 /* LaunchScreen.storyboard */; };
 		048C38A81C9A375300AABE66 /* LevelOne.sks in Resources */ = {isa = PBXBuildFile; fileRef = 048C38A71C9A375300AABE66 /* LevelOne.sks */; };
 		048C38AA1C9A375E00AABE66 /* LevelOne.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048C38A91C9A375E00AABE66 /* LevelOne.swift */; };
+		048C38AC1C9A382A00AABE66 /* Tower.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048C38AB1C9A382A00AABE66 /* Tower.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		041EA7311C99F77D00DF9631 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		048C38A71C9A375300AABE66 /* LevelOne.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = LevelOne.sks; sourceTree = "<group>"; };
 		048C38A91C9A375E00AABE66 /* LevelOne.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelOne.swift; sourceTree = "<group>"; };
+		048C38AB1C9A382A00AABE66 /* Tower.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tower.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +69,7 @@
 				041EA7251C99F77C00DF9631 /* GameScene.swift */,
 				048C38A71C9A375300AABE66 /* LevelOne.sks */,
 				048C38A91C9A375E00AABE66 /* LevelOne.swift */,
+				048C38AB1C9A382A00AABE66 /* Tower.swift */,
 				041EA7271C99F77D00DF9631 /* GameViewController.swift */,
 				041EA7291C99F77D00DF9631 /* Main.storyboard */,
 				041EA72C1C99F77D00DF9631 /* Assets.xcassets */,
@@ -151,6 +154,7 @@
 			files = (
 				041EA7261C99F77C00DF9631 /* GameScene.swift in Sources */,
 				041EA7281C99F77D00DF9631 /* GameViewController.swift in Sources */,
+				048C38AC1C9A382A00AABE66 /* Tower.swift in Sources */,
 				041EA7221C99F77C00DF9631 /* AppDelegate.swift in Sources */,
 				048C38AA1C9A375E00AABE66 /* LevelOne.swift in Sources */,
 			);
