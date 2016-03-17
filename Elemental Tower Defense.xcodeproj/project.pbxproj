@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		041EA7221C99F77C00DF9631 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EA7211C99F77C00DF9631 /* AppDelegate.swift */; };
-		041EA7241C99F77C00DF9631 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 041EA7231C99F77C00DF9631 /* GameScene.sks */; };
-		041EA7261C99F77C00DF9631 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EA7251C99F77C00DF9631 /* GameScene.swift */; };
+		041EA7241C99F77C00DF9631 /* MainMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 041EA7231C99F77C00DF9631 /* MainMenu.sks */; };
+		041EA7261C99F77C00DF9631 /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EA7251C99F77C00DF9631 /* MainMenu.swift */; };
 		041EA7281C99F77D00DF9631 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EA7271C99F77D00DF9631 /* GameViewController.swift */; };
 		041EA72B1C99F77D00DF9631 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041EA7291C99F77D00DF9631 /* Main.storyboard */; };
 		041EA72D1C99F77D00DF9631 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 041EA72C1C99F77D00DF9631 /* Assets.xcassets */; };
@@ -22,8 +22,8 @@
 /* Begin PBXFileReference section */
 		041EA71E1C99F77C00DF9631 /* Elemental Tower Defense.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Elemental Tower Defense.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		041EA7211C99F77C00DF9631 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		041EA7231C99F77C00DF9631 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
-		041EA7251C99F77C00DF9631 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
+		041EA7231C99F77C00DF9631 /* MainMenu.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainMenu.sks; sourceTree = "<group>"; };
+		041EA7251C99F77C00DF9631 /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		041EA7271C99F77D00DF9631 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		041EA72A1C99F77D00DF9631 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		041EA72C1C99F77D00DF9631 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -65,10 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				041EA7211C99F77C00DF9631 /* AppDelegate.swift */,
-				041EA7231C99F77C00DF9631 /* GameScene.sks */,
-				041EA7251C99F77C00DF9631 /* GameScene.swift */,
-				048C38A71C9A375300AABE66 /* LevelOne.sks */,
-				048C38A91C9A375E00AABE66 /* LevelOne.swift */,
+				048C38AD1C9A3B6500AABE66 /* Game Scenes */,
 				048C38AB1C9A382A00AABE66 /* Tower.swift */,
 				041EA7271C99F77D00DF9631 /* GameViewController.swift */,
 				041EA7291C99F77D00DF9631 /* Main.storyboard */,
@@ -77,6 +74,17 @@
 				041EA7311C99F77D00DF9631 /* Info.plist */,
 			);
 			path = "Elemental Tower Defense";
+			sourceTree = "<group>";
+		};
+		048C38AD1C9A3B6500AABE66 /* Game Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				041EA7231C99F77C00DF9631 /* MainMenu.sks */,
+				041EA7251C99F77C00DF9631 /* MainMenu.swift */,
+				048C38A71C9A375300AABE66 /* LevelOne.sks */,
+				048C38A91C9A375E00AABE66 /* LevelOne.swift */,
+			);
+			name = "Game Scenes";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -138,7 +146,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				048C38A81C9A375300AABE66 /* LevelOne.sks in Resources */,
-				041EA7241C99F77C00DF9631 /* GameScene.sks in Resources */,
+				041EA7241C99F77C00DF9631 /* MainMenu.sks in Resources */,
 				041EA7301C99F77D00DF9631 /* LaunchScreen.storyboard in Resources */,
 				041EA72D1C99F77D00DF9631 /* Assets.xcassets in Resources */,
 				041EA72B1C99F77D00DF9631 /* Main.storyboard in Resources */,
@@ -152,7 +160,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				041EA7261C99F77C00DF9631 /* GameScene.swift in Sources */,
+				041EA7261C99F77C00DF9631 /* MainMenu.swift in Sources */,
 				041EA7281C99F77D00DF9631 /* GameViewController.swift in Sources */,
 				048C38AC1C9A382A00AABE66 /* Tower.swift in Sources */,
 				041EA7221C99F77C00DF9631 /* AppDelegate.swift in Sources */,

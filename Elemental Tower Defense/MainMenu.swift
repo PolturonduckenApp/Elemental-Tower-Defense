@@ -8,7 +8,7 @@
 
 import SpriteKit
 
-class GameScene: SKScene {
+class MainMenu: SKScene {
     let screenSize: CGRect = UIScreen.mainScreen().bounds
     var screenWidth : CGFloat = 0
     var screenHeight : CGFloat = 0
