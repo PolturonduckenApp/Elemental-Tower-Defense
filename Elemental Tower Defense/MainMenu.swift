@@ -31,8 +31,7 @@ class MainMenu: SKScene {
             if self.nodeAtPoint(location).name == "LevelOneButton" {
                 let transition = SKTransition.revealWithDirection(.Left, duration: 1.0)
                 
-                let levelOne = LevelOne(size: scene!.size)
-                levelOne.scaleMode = .AspectFill
+                let levelOne = LevelOne(size: self.size)
                 
                 scene?.view?.presentScene(levelOne, transition: transition)
             }
