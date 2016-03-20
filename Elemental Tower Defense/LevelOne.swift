@@ -25,28 +25,20 @@ class LevelOne: SKScene {
     var foundOpenSpace = false
     
     var curTowerType : String = ""
-    var curTowerIndex = 0
+    
     var grid : Grid!
+    
+    var curTowerIndex = 0
+    
     var widthSep : Double = 0.0
     var heightSep : Double = 0.0
-    var lastUpdateTimeInterval: CFTimeInterval = 0
+    
     var startTime = NSDate.timeIntervalSinceReferenceDate()
     var curTime: NSTimeInterval = 0
-    
-    var seconds : Int!
-    var delta : Int!
-    var dateComponents : NSDateComponents!
-    var date : NSDate!
     
     override func didMoveToView(view: SKView) {
         screenWidth = screenSize.width
         screenHeight = screenSize.height
-        
-        dateComponents = NSDateComponents()
-        date = NSDate()
-        
-        seconds = dateComponents.second
-        delta = seconds
         
         var locations : [[CGPoint]] = [[CGPoint(x: 0.0, y: 0.0)]]
         
