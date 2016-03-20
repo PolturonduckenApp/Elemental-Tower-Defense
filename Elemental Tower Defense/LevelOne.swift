@@ -25,6 +25,7 @@ class LevelOne: SKScene {
     var widthSep : Double = 0.0
     var heightSep : Double = 0.0
     var breakFromSearch = false
+    var foundOpenSpace = false
     
     override func didMoveToView(view: SKView) {
         screenWidth = screenSize.width
@@ -32,8 +33,8 @@ class LevelOne: SKScene {
         
         var locations : [[CGPoint]] = [[CGPoint(x: 0.0, y: 0.0)]]
         
-        widthSep = Double(screenWidth / 20)
-        heightSep = Double(screenHeight / 20)
+        widthSep = Double(screenWidth / 15)
+        heightSep = Double(screenHeight / 15)
         
         for x in 0..<20 {
             locations.append([CGPoint(x: 0.0, y: 0.0)])
@@ -49,7 +50,7 @@ class LevelOne: SKScene {
         levelOneLabel.name = "Level Label"
         levelOneLabel.fontSize = 45
         levelOneLabel.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame) + 300)
-
+        
         let mainRock = SKSpriteNode(imageNamed: "Rock")
         mainRock.position.x = 100
         mainRock.position.y = 100
@@ -179,33 +180,41 @@ class LevelOne: SKScene {
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        for x in 0..<20 {
-            for y in 0..<20 {
+        for x in 0..<grid.locations.count {
+            for y in 0..<grid.locations[x].count {
                 if curTowerType == "Rock" {
-                    if Double(rockTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(rockTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) {
+                    if Double(rockTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(rockTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
                         rockTowers[curTowerIndex].position = grid.locations[x][y]
+                        grid.towerList[x][y] = true
                         breakFromSearch = true
+                        foundOpenSpace = true
                         break
                     }
                 }
                 else if curTowerType == "Air" {
-                    if Double(airTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(airTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(airTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(airTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) {
+                    if Double(airTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(airTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(airTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(airTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
                         airTowers[curTowerIndex].position = grid.locations[x][y]
+                        grid.towerList[x][y] = true
                         breakFromSearch = true
+                        foundOpenSpace = true
                         break
                     }
                 }
                 else if curTowerType == "Water" {
-                    if Double(waterTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(waterTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) {
+                    if Double(waterTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(waterTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
                         waterTowers[curTowerIndex].position = grid.locations[x][y]
+                        grid.towerList[x][y] = true
                         breakFromSearch = true
+                        foundOpenSpace = true
                         break
                     }
                 }
                 else if curTowerType == "Fire" {
-                    if Double(fireTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(fireTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) {
+                    if Double(fireTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(fireTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
                         fireTowers[curTowerIndex].position = grid.locations[x][y]
+                        grid.towerList[x][y] = true
                         breakFromSearch = true
+                        foundOpenSpace = true
                         break
                     }
                 }
@@ -215,6 +224,28 @@ class LevelOne: SKScene {
                 break
             }
         }
+        
+        if foundOpenSpace == false {
+            if curTowerType == "Rock" {
+                rockTowers[curTowerIndex].removeFromParent()
+                rockTowers.removeAtIndex(curTowerIndex)
+            }
+            else if curTowerType == "Water" {
+                waterTowers[curTowerIndex].removeFromParent()
+                waterTowers.removeAtIndex(curTowerIndex)
+            }
+            else if curTowerType == "Air" {
+                airTowers[curTowerIndex].removeFromParent()
+                airTowers.removeAtIndex(curTowerIndex)
+            }
+            else if curTowerType == "Fire" {
+                fireTowers[curTowerIndex].removeFromParent()
+                fireTowers.removeAtIndex(curTowerIndex)
+            }
+        }
+        
+        foundOpenSpace = false
+        
         dragTower = false
     }
     

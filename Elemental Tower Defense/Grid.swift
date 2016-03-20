@@ -10,7 +10,7 @@ import Foundation
 import SpriteKit
 
 class Grid {
-    var towerList : [[Bool]]!
+    var towerList : [[Bool]] = [[false]]
     var locations : [[CGPoint]]!
     
     convenience init() {
@@ -19,5 +19,12 @@ class Grid {
     
     init(locations: [[CGPoint]]) {
         self.locations = locations
+        
+        for x in 0..<locations.count {
+            self.towerList.append([false])
+            for y in 0..<20 {
+                self.towerList[x].append(false)
+            }
+        }
     }
 }
