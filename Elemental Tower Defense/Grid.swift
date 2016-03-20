@@ -7,11 +7,17 @@
 //
 
 import Foundation
+import SpriteKit
 
 class Grid {
-    var towerList : [[Bool]] = [[]]
+    var towerList : [[Bool]]!
+    var locations : [[CGPoint]]!
     
-    init() {
-        
+    convenience init() {
+        self.init(locations: [[]])
+    }
+    
+    init(locations: [[CGPoint]]) {
+        self.locations = locations
     }
 }

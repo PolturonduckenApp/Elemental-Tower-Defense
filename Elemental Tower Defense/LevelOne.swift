@@ -21,10 +21,28 @@ class LevelOne: SKScene {
     var dragTower = false
     var curTowerType : String = ""
     var curTowerIndex = 0
+    var grid : Grid!
+    var widthSep : Double = 0.0
+    var heightSep : Double = 0.0
+    var breakFromSearch = false
     
     override func didMoveToView(view: SKView) {
         screenWidth = screenSize.width
         screenHeight = screenSize.height
+        
+        var locations : [[CGPoint]] = [[CGPoint(x: 0.0, y: 0.0)]]
+        
+        widthSep = Double(screenWidth / 20)
+        heightSep = Double(screenHeight / 20)
+        
+        for x in 0..<20 {
+            locations.append([CGPoint(x: 0.0, y: 0.0)])
+            for y in 0..<20 {
+                locations[x].append(CGPoint(x: widthSep * Double(x), y: heightSep * Double(y)))
+            }
+        }
+        
+        grid = Grid(locations: locations)
         
         let levelOneLabel = SKLabelNode(fontNamed: "Chalkduster")
         levelOneLabel.text = "Level One"
@@ -79,8 +97,8 @@ class LevelOne: SKScene {
                 dragTower = true
                 curTowerType = "Rock"
                 curTowerIndex = rockTowers.count - 1
-                newTower.xScale = 0.3
-                newTower.yScale = 0.3
+                newTower.xScale = 0.1
+                newTower.yScale = 0.1
             }
             else if self.nodeAtPoint(location).name == "Main Water" {
                 let newTower = SKSpriteNode(imageNamed: "Water")
@@ -91,8 +109,8 @@ class LevelOne: SKScene {
                 dragTower = true
                 curTowerType = "Water"
                 curTowerIndex = waterTowers.count - 1
-                newTower.xScale = 0.5
-                newTower.yScale = 0.5
+                newTower.xScale = 0.2
+                newTower.yScale = 0.2
             }
             else if self.nodeAtPoint(location).name == "Main Air" {
                 let newTower = SKSpriteNode(imageNamed: "Air")
@@ -103,8 +121,8 @@ class LevelOne: SKScene {
                 dragTower = true
                 curTowerType = "Air"
                 curTowerIndex = airTowers.count - 1
-                newTower.xScale = 0.5
-                newTower.yScale = 0.5
+                newTower.xScale = 0.2
+                newTower.yScale = 0.2
             }
             else if self.nodeAtPoint(location).name == "Main Fire" {
                 let newTower = SKSpriteNode(imageNamed: "Fire")
@@ -115,25 +133,27 @@ class LevelOne: SKScene {
                 dragTower = true
                 curTowerType = "Fire"
                 curTowerIndex = fireTowers.count - 1
-                newTower.xScale = 0.5
-                newTower.yScale = 0.5
+                newTower.xScale = 0.2
+                newTower.yScale = 0.2
             }
             else {
-                self.nodeAtPoint(location).position = location
-                curTowerType = self.nodeAtPoint(location).name!
-                if curTowerType == "Rock" {
-                    curTowerIndex = rockTowers.indexOf(self.nodeAtPoint(location))!
+                if let _ = self.nodeAtPoint(location).name {
+                    self.nodeAtPoint(location).position = location
+                    curTowerType = self.nodeAtPoint(location).name!
+                    if curTowerType == "Rock" {
+                        curTowerIndex = rockTowers.indexOf(self.nodeAtPoint(location))!
+                    }
+                    else if curTowerType == "Water" {
+                        curTowerIndex = waterTowers.indexOf(self.nodeAtPoint(location))!
+                    }
+                    else if curTowerType == "Air" {
+                        curTowerIndex = airTowers.indexOf(self.nodeAtPoint(location))!
+                    }
+                    else if curTowerType == "Fire" {
+                        curTowerIndex = fireTowers.indexOf(self.nodeAtPoint(location))!
+                    }
+                    dragTower = true
                 }
-                else if curTowerType == "Water" {
-                    curTowerIndex = waterTowers.indexOf(self.nodeAtPoint(location))!
-                }
-                else if curTowerType == "Air" {
-                    curTowerIndex = airTowers.indexOf(self.nodeAtPoint(location))!
-                }
-                else if curTowerType == "Fire" {
-                    curTowerIndex = fireTowers.indexOf(self.nodeAtPoint(location))!
-                }
-                dragTower = true
             }
         }
     }
@@ -159,6 +179,42 @@ class LevelOne: SKScene {
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        for x in 0..<20 {
+            for y in 0..<20 {
+                if curTowerType == "Rock" {
+                    if Double(rockTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(rockTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) {
+                        rockTowers[curTowerIndex].position = grid.locations[x][y]
+                        breakFromSearch = true
+                        break
+                    }
+                }
+                else if curTowerType == "Air" {
+                    if Double(airTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(airTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(airTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(airTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) {
+                        airTowers[curTowerIndex].position = grid.locations[x][y]
+                        breakFromSearch = true
+                        break
+                    }
+                }
+                else if curTowerType == "Water" {
+                    if Double(waterTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(waterTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) {
+                        waterTowers[curTowerIndex].position = grid.locations[x][y]
+                        breakFromSearch = true
+                        break
+                    }
+                }
+                else if curTowerType == "Fire" {
+                    if Double(fireTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(fireTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) {
+                        fireTowers[curTowerIndex].position = grid.locations[x][y]
+                        breakFromSearch = true
+                        break
+                    }
+                }
+            }
+            if breakFromSearch == true {
+                breakFromSearch = false
+                break
+            }
+        }
         dragTower = false
     }
     
