@@ -18,18 +18,35 @@ class LevelOne: SKScene {
     var fireTowers : [SKNode] = []
     var airTowers : [SKNode] = []
     var waterTowers : [SKNode] = []
+    var shadowPeople : [SKNode] = []
+    
     var dragTower = false
+    var breakFromSearch = false
+    var foundOpenSpace = false
+    
     var curTowerType : String = ""
     var curTowerIndex = 0
     var grid : Grid!
     var widthSep : Double = 0.0
     var heightSep : Double = 0.0
-    var breakFromSearch = false
-    var foundOpenSpace = false
+    var lastUpdateTimeInterval: CFTimeInterval = 0
+    var startTime = NSDate.timeIntervalSinceReferenceDate()
+    var curTime: NSTimeInterval = 0
+    
+    var seconds : Int!
+    var delta : Int!
+    var dateComponents : NSDateComponents!
+    var date : NSDate!
     
     override func didMoveToView(view: SKView) {
         screenWidth = screenSize.width
         screenHeight = screenSize.height
+        
+        dateComponents = NSDateComponents()
+        date = NSDate()
+        
+        seconds = dateComponents.second
+        delta = seconds
         
         var locations : [[CGPoint]] = [[CGPoint(x: 0.0, y: 0.0)]]
         
@@ -250,6 +267,18 @@ class LevelOne: SKScene {
     }
     
     override func update(currentTime: CFTimeInterval) {
-        /* Called before each frame is rendered */
+        curTime = NSDate.timeIntervalSinceReferenceDate()
+        let elapsedTime = curTime - startTime
+        if elapsedTime >= 5 {
+            startTime = curTime
+            let newPerson = SKSpriteNode(imageNamed: "ShadowPerson")
+            newPerson.position.y = screenHeight / 2
+            shadowPeople.append(newPerson)
+            self.addChild(newPerson)
+        }
+        
+        for person in shadowPeople {
+            person.position.x += 5
+        }
     }
 }
