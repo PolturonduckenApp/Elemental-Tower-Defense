@@ -10,41 +10,49 @@ import UIKit
 import SpriteKit
 
 class LevelOne: SKScene {
+    //Determining screen size
     let screenSize: CGRect = UIScreen.mainScreen().bounds
     var screenWidth : CGFloat = 0
     var screenHeight : CGFloat = 0
     
+    //List of different towers + enemy
     var rockTowers : [SKNode] = []
     var fireTowers : [SKNode] = []
     var airTowers : [SKNode] = []
     var waterTowers : [SKNode] = []
     var shadowPeople : [SKNode] = []
     
+    //Dragging tower to location in grid
     var dragTower = false
     var breakFromSearch = false
     var foundOpenSpace = false
     
-    var curTowerType : String = ""
+    var curTowerType : String = "" //Current new tower type
     
-    var grid : Grid!
+    var grid : Grid! //Grid
     
-    var curTowerIndex = 0
+    var curTowerIndex = 0 //Current new tower index
     
+    //Seperation between tiles in grid
     var widthSep : Double = 0.0
     var heightSep : Double = 0.0
     
+    //Time to spawn new enemy
     var startTime = NSDate.timeIntervalSinceReferenceDate()
     var curTime: NSTimeInterval = 0
     
     override func didMoveToView(view: SKView) {
+        //Determines screen size
         screenWidth = screenSize.width
         screenHeight = screenSize.height
         
-        var locations : [[CGPoint]] = [[CGPoint(x: 0.0, y: 0.0)]]
+        var locations : [[CGPoint]] = [[CGPoint(x: 0.0, y: 0.0)]] //Locations of towers
         
+        //Attempts to determine distance between tiles
         widthSep = Double(screenWidth / 15)
         heightSep = Double(screenHeight / 15)
         
+        //Sets up grid
         for x in 0..<20 {
             locations.append([CGPoint(x: 0.0, y: 0.0)])
             for y in 0..<20 {
@@ -52,14 +60,18 @@ class LevelOne: SKScene {
             }
         }
         
-        grid = Grid(locations: locations)
+        grid = Grid(locations: locations) //Sets up grid pt. 2
         
+        //Level One Title
         let levelOneLabel = SKLabelNode(fontNamed: "Chalkduster")
         levelOneLabel.text = "Level One"
         levelOneLabel.name = "Level Label"
         levelOneLabel.fontSize = 45
         levelOneLabel.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame) + 300)
         
+        /**
+         * Sets up icons
+         */
         let mainRock = SKSpriteNode(imageNamed: "Rock")
         mainRock.position.x = 100
         mainRock.position.y = 100
@@ -97,7 +109,13 @@ class LevelOne: SKScene {
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         for touch in touches {
-            let location = touch.locationInNode(self)
+            let location = touch.locationInNode(self)//Find the location of the touch
+            
+            /**
+             * • Determines which tower
+             * • Creates a new tower and adds it to the list
+             * • Sets up other necessary variables
+             */
             if self.nodeAtPoint(location).name == "Main Rock" {
                 let newTower = SKSpriteNode(imageNamed: "Rock")
                 rockTowers.append(newTower)
@@ -147,6 +165,9 @@ class LevelOne: SKScene {
                 newTower.yScale = 0.2
             }
             else {
+                /**
+                 * Determines type of new tower
+                 */
                 if let _ = self.nodeAtPoint(location).name {
                     self.nodeAtPoint(location).position = location
                     curTowerType = self.nodeAtPoint(location).name!
@@ -169,6 +190,9 @@ class LevelOne: SKScene {
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        /**
+         * • Literally just moves nodes with the position of your finger
+         */
         for touch in touches {
             let location = touch.locationInNode(self)
             if dragTower == true {
@@ -189,8 +213,17 @@ class LevelOne: SKScene {
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        /**
+         * Alright here is where things get complicated
+         */
         for x in 0..<grid.locations.count {
             for y in 0..<grid.locations[x].count {
+                /**
+                 * So as far as I can tell this is what this does:
+                 * • Determines type of the new Tower type
+                 * • Determines if there is an open space where the tower is dropped
+                 * • If there is an open space, break from search, signal a found open space, put the tower there
+                 */
                 if curTowerType == "Rock" {
                     if Double(rockTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(rockTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
                         rockTowers[curTowerIndex].position = grid.locations[x][y]
@@ -234,6 +267,9 @@ class LevelOne: SKScene {
             }
         }
         
+        /**
+         * If found open space, remove the rock from the parent and from the tower list
+         */
         if foundOpenSpace == false {
             if curTowerType == "Rock" {
                 rockTowers[curTowerIndex].removeFromParent()
@@ -259,6 +295,9 @@ class LevelOne: SKScene {
     }
     
     override func update(currentTime: CFTimeInterval) {
+        /**
+         * Spawns enemies every five secons
+         */
         curTime = NSDate.timeIntervalSinceReferenceDate()
         let elapsedTime = curTime - startTime
         if elapsedTime >= 5 {
