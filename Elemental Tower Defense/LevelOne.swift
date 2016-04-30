@@ -237,27 +237,30 @@ class LevelOne: SKScene {
                     }
                 }
                 else if curTowerType == "Air" {
+                    let close = nearestSpace("Air")
                     if Double(airTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(airTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(airTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(airTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
-                        airTowers[curTowerIndex].position = grid.locations[x][y]
-                        grid.towerList[x][y] = true
+                        airTowers[curTowerIndex].position = grid.locations[close.x][close.y]
+                        grid.towerList[close.x][close.y] = true
                         breakFromSearch = true
                         foundOpenSpace = true
                         break
                     }
                 }
                 else if curTowerType == "Water" {
+                    let close = nearestSpace("Water")
                     if Double(waterTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(waterTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
-                        waterTowers[curTowerIndex].position = grid.locations[x][y]
-                        grid.towerList[x][y] = true
+                        waterTowers[curTowerIndex].position = grid.locations[close.x][close.y]
+                        grid.towerList[close.x][close.y] = true
                         breakFromSearch = true
                         foundOpenSpace = true
                         break
                     }
                 }
                 else if curTowerType == "Fire" {
+                    let close = nearestSpace("Fire")
                     if Double(fireTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(fireTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
-                        fireTowers[curTowerIndex].position = grid.locations[x][y]
-                        grid.towerList[x][y] = true
+                        fireTowers[curTowerIndex].position = grid.locations[close.x][close.y]
+                        grid.towerList[close.x][close.y] = true
                         breakFromSearch = true
                         foundOpenSpace = true
                         break
@@ -330,6 +333,61 @@ class LevelOne: SKScene {
                     //If the tower is near an open space.....
                     if Double(rockTowers[curTowerIndex].position.x) - widthSep <= Double(grid!.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.x) + widthSep >= Double(grid!.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.y) - widthSep <= Double(grid!.locations[x][y].y) && Double(rockTowers[curTowerIndex].position.y) + widthSep >= Double(grid!.locations[x][y].y) && grid!.towerList[x][y] == false {
                         let temp = disBetweenPoints(rockTowers[curTowerIndex].position, target: grid!.locations[x][y]) //....finds difference between the two points....
+                        
+                        //....and if said difference is smaller than the smallest difference so far, set it as the new smallest difference and save the index
+                        if temp.x < smallestDiffX && temp.y < smallestDiffY {
+                            smallestDiffX = temp.x
+                            smallestDiffY = temp.y
+                            smallestIndexX = x
+                            smallestIndexY = y
+                        }
+                    }
+                }
+            }
+        }
+        else if type == "Water" { //Takes in the type of the tower
+            //Iterates through each and every possible cell
+            for x in 0..<grid!.locations.count {
+                for y in 0..<grid!.locations[x].count {
+                    //If the tower is near an open space.....
+                    if Double(waterTowers[curTowerIndex].position.x) - widthSep <= Double(grid!.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.x) + widthSep >= Double(grid!.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.y) - widthSep <= Double(grid!.locations[x][y].y) && Double(waterTowers[curTowerIndex].position.y) + widthSep >= Double(grid!.locations[x][y].y) && grid!.towerList[x][y] == false {
+                        let temp = disBetweenPoints(waterTowers[curTowerIndex].position, target: grid!.locations[x][y]) //....finds difference between the two points....
+                        
+                        //....and if said difference is smaller than the smallest difference so far, set it as the new smallest difference and save the index
+                        if temp.x < smallestDiffX && temp.y < smallestDiffY {
+                            smallestDiffX = temp.x
+                            smallestDiffY = temp.y
+                            smallestIndexX = x
+                            smallestIndexY = y
+                        }
+                    }
+                }
+            }
+        } else if type == "Air" { //Takes in the type of the tower
+            //Iterates through each and every possible cell
+            for x in 0..<grid!.locations.count {
+                for y in 0..<grid!.locations[x].count {
+                    //If the tower is near an open space.....
+                    if Double(airTowers[curTowerIndex].position.x) - widthSep <= Double(grid!.locations[x][y].x) && Double(airTowers[curTowerIndex].position.x) + widthSep >= Double(grid!.locations[x][y].x) && Double(airTowers[curTowerIndex].position.y) - widthSep <= Double(grid!.locations[x][y].y) && Double(airTowers[curTowerIndex].position.y) + widthSep >= Double(grid!.locations[x][y].y) && grid!.towerList[x][y] == false {
+                        let temp = disBetweenPoints(airTowers[curTowerIndex].position, target: grid!.locations[x][y]) //....finds difference between the two points....
+                        
+                        //....and if said difference is smaller than the smallest difference so far, set it as the new smallest difference and save the index
+                        if temp.x < smallestDiffX && temp.y < smallestDiffY {
+                            smallestDiffX = temp.x
+                            smallestDiffY = temp.y
+                            smallestIndexX = x
+                            smallestIndexY = y
+                        }
+                    }
+                }
+            }
+        } else if type == "Fire" { //Takes in the type of the tower
+            //Iterates through each and every possible cell
+            for x in 0..<grid!.locations.count {
+                for y in 0..<grid!.locations[x].count {
+                    //If the tower is near an open space.....
+                    if Double(fireTowers[curTowerIndex].position.x) - widthSep <= Double(grid!.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.x) + widthSep >= Double(grid!.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.y) - widthSep <= Double(grid!.locations[x][y].y) && Double(fireTowers[curTowerIndex].position.y) + widthSep >= Double(grid!.locations[x][y].y) && grid!.towerList[x][y] == false {
+                        let temp = disBetweenPoints(fireTowers[curTowerIndex].position, target: grid!.locations[x][y]) //....finds difference between the two points....
                         
                         //....and if said difference is smaller than the smallest difference so far, set it as the new smallest difference and save the index
                         if temp.x < smallestDiffX && temp.y < smallestDiffY {
