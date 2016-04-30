@@ -45,6 +45,8 @@ class LevelOne: SKScene {
         //Determines screen size
         screenWidth = screenSize.width
         screenHeight = screenSize.height
+        print(screenWidth)
+        print(screenHeight)
         
         var locations : [[CGPoint]] = [[CGPoint(x: 0.0, y: 0.0)]] //Locations of towers
         
@@ -225,9 +227,10 @@ class LevelOne: SKScene {
                  * • If there is an open space, break from search, signal a found open space, put the tower there
                  */
                 if curTowerType == "Rock" {
+                    var close = disToNearSpace("Rock")
                     if Double(rockTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(rockTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
-                        rockTowers[curTowerIndex].position = grid.locations[x][y]
-                        grid.towerList[x][y] = true
+                        rockTowers[curTowerIndex].position = grid.locations[close.closeX][close.closeY]
+                        grid.towerList[close.closeX][close.closeY] = true
                         breakFromSearch = true
                         foundOpenSpace = true
                         break
@@ -298,18 +301,62 @@ class LevelOne: SKScene {
         /**
          * Spawns enemies every five secons
          */
-        curTime = NSDate.timeIntervalSinceReferenceDate()
-        let elapsedTime = curTime - startTime
-        if elapsedTime >= 5 {
-            startTime = curTime
-            let newPerson = SKSpriteNode(imageNamed: "ShadowPerson")
-            newPerson.position.y = screenHeight / 2
-            shadowPeople.append(newPerson)
-            self.addChild(newPerson)
+        /*curTime = NSDate.timeIntervalSinceReferenceDate()
+         let elapsedTime = curTime - startTime
+         if elapsedTime >= 5 {
+         startTime = curTime
+         let newPerson = SKSpriteNode(imageNamed: "ShadowPerson")
+         newPerson.position.y = screenHeight / 2
+         shadowPeople.append(newPerson)
+         self.addChild(newPerson)
+         }
+         
+         for person in shadowPeople {
+         person.position.x += 5
+         }*/
+    }
+    
+    func disToNearSpace(type: String) -> (closeX : Int, closeY : Int) {
+        var nearLocationsX : [Int] = []
+        var nearLocationsY : [Int] = []
+        
+        var closeX = 0
+        var closeXIndex = -1
+        var actualIndexX = 0
+        
+        var closeY = 0
+        var closeYIndex = -1
+        var actualIndexY = 0
+        
+        if type == "Rock" {
+            for x in 0..<grid!.locations.count {
+                for y in 0..<grid!.locations[x].count {
+                    if Double(rockTowers[curTowerIndex].position.x) - widthSep <= Double(grid!.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.x) + widthSep >= Double(grid!.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.y) - widthSep <= Double(grid!.locations[x][y].y) && Double(rockTowers[curTowerIndex].position.y) + widthSep >= Double(grid!.locations[x][y].y) && grid!.towerList[x][y] == false {
+                        nearLocationsX.append(x)
+                        nearLocationsY.append(y)
+                    }
+                }
+            }
+            
+            for index in 0..<nearLocationsX.count {
+                var distance = abs(grid!.locations[nearLocationsX[index]][1].x - rockTowers[curTowerIndex].position.x)
+                if Int(distance) > closeX {
+                    closeX = Int(grid!.locations[nearLocationsX[index]][1].x)
+                    actualIndexX = nearLocationsX[index]
+                    closeXIndex = index
+                }
+            }
+            
+            for index in 0..<nearLocationsY.count {
+                var distance = abs(grid!.locations[1][nearLocationsY[index]].y - rockTowers[curTowerIndex].position.y)
+                if Int(distance) > closeY {
+                    closeY = nearLocationsY[index]
+                    actualIndexY = nearLocationsY[index]
+                    closeYIndex = index
+                }
+            }
         }
         
-        for person in shadowPeople {
-            person.position.x += 5
-        }
+        return (closeXIndex, closeYIndex)
     }
 }
