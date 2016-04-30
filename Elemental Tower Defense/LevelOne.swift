@@ -227,10 +227,10 @@ class LevelOne: SKScene {
                  * • If there is an open space, break from search, signal a found open space, put the tower there
                  */
                 if curTowerType == "Rock" {
-                    var close = disToNearSpace("Rock")
+                    let close = nearestSpace("Rock")
                     if Double(rockTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(rockTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
-                        rockTowers[curTowerIndex].position = grid.locations[close.closeX][close.closeY]
-                        grid.towerList[close.closeX][close.closeY] = true
+                        rockTowers[curTowerIndex].position = grid.locations[close.x][close.y]
+                        grid.towerList[close.x][close.y] = true
                         breakFromSearch = true
                         foundOpenSpace = true
                         break
@@ -316,47 +316,47 @@ class LevelOne: SKScene {
          }*/
     }
     
-    func disToNearSpace(type: String) -> (closeX : Int, closeY : Int) {
-        var nearLocationsX : [Int] = []
-        var nearLocationsY : [Int] = []
+    func nearestSpace(type: String) -> (x: Int, y: Int) {
+        //Sets up variables for the smallest difference between points and the index for said points
+        var smallestDiffX = CGFloat.max
+        var smallestDiffY = CGFloat.max
+        var smallestIndexX = 0
+        var smallestIndexY = 0
         
-        var closeX = 0
-        var closeXIndex = -1
-        var actualIndexX = 0
-        
-        var closeY = 0
-        var closeYIndex = -1
-        var actualIndexY = 0
-        
-        if type == "Rock" {
+        if type == "Rock" { //Takes in the type of the tower
+            //Iterates through each and every possible cell
             for x in 0..<grid!.locations.count {
                 for y in 0..<grid!.locations[x].count {
+                    //If the tower is near an open space.....
                     if Double(rockTowers[curTowerIndex].position.x) - widthSep <= Double(grid!.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.x) + widthSep >= Double(grid!.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.y) - widthSep <= Double(grid!.locations[x][y].y) && Double(rockTowers[curTowerIndex].position.y) + widthSep >= Double(grid!.locations[x][y].y) && grid!.towerList[x][y] == false {
-                        nearLocationsX.append(x)
-                        nearLocationsY.append(y)
+                        let temp = disBetweenPoints(rockTowers[curTowerIndex].position, target: grid!.locations[x][y]) //....finds difference between the two points....
+                        
+                        //....and if said difference is smaller than the smallest difference so far, set it as the new smallest difference and save the index
+                        if temp.x < smallestDiffX && temp.y < smallestDiffY {
+                            smallestDiffX = temp.x
+                            smallestDiffY = temp.y
+                            smallestIndexX = x
+                            smallestIndexY = y
+                        }
                     }
-                }
-            }
-            
-            for index in 0..<nearLocationsX.count {
-                var distance = abs(grid!.locations[nearLocationsX[index]][1].x - rockTowers[curTowerIndex].position.x)
-                if Int(distance) > closeX {
-                    closeX = Int(grid!.locations[nearLocationsX[index]][1].x)
-                    actualIndexX = nearLocationsX[index]
-                    closeXIndex = index
-                }
-            }
-            
-            for index in 0..<nearLocationsY.count {
-                var distance = abs(grid!.locations[1][nearLocationsY[index]].y - rockTowers[curTowerIndex].position.y)
-                if Int(distance) > closeY {
-                    closeY = nearLocationsY[index]
-                    actualIndexY = nearLocationsY[index]
-                    closeYIndex = index
                 }
             }
         }
         
-        return (closeXIndex, closeYIndex)
+        return (smallestIndexX, smallestIndexY)
+    }
+    
+    func disBetweenPoints(base : CGPoint, target : CGPoint) -> (x: CGFloat, y: CGFloat) {
+        //Takes in the x and y values of each point
+        let baseX = base.x
+        let baseY = base.y
+        let targetX = target.x
+        let targetY = target.y
+        
+        //Does some intense calculus to figure out the difference between the two x and y values
+        let diffX = abs(targetX - baseX)
+        let diffY = abs(targetY - baseY)
+        
+        return (diffX, diffY)
     }
 }
