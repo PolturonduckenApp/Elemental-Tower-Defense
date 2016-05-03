@@ -14,6 +14,9 @@
 		041EA72B1C99F77D00DF9631 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041EA7291C99F77D00DF9631 /* Main.storyboard */; };
 		041EA72D1C99F77D00DF9631 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 041EA72C1C99F77D00DF9631 /* Assets.xcassets */; };
 		041EA7301C99F77D00DF9631 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041EA72E1C99F77D00DF9631 /* LaunchScreen.storyboard */; };
+		042F9FFC1CD7D05600B3A6D7 /* Tile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042F9FFB1CD7D05600B3A6D7 /* Tile.swift */; };
+		042F9FFE1CD7D38A00B3A6D7 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042F9FFD1CD7D38A00B3A6D7 /* Path.swift */; };
+		0448A7FA1CD5665800705CF7 /* Enemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0448A7F91CD5665800705CF7 /* Enemy.swift */; };
 		0459E62D1C9B0DEC00DE62FF /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0459E62C1C9B0DEC00DE62FF /* Grid.swift */; };
 		048C38A81C9A375300AABE66 /* LevelOne.sks in Resources */ = {isa = PBXBuildFile; fileRef = 048C38A71C9A375300AABE66 /* LevelOne.sks */; };
 		048C38AC1C9A382A00AABE66 /* Tower.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048C38AB1C9A382A00AABE66 /* Tower.swift */; };
@@ -30,6 +33,9 @@
 		041EA72C1C99F77D00DF9631 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		041EA72F1C99F77D00DF9631 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		041EA7311C99F77D00DF9631 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		042F9FFB1CD7D05600B3A6D7 /* Tile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tile.swift; sourceTree = "<group>"; };
+		042F9FFD1CD7D38A00B3A6D7 /* Path.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
+		0448A7F91CD5665800705CF7 /* Enemy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enemy.swift; sourceTree = "<group>"; };
 		0459E62C1C9B0DEC00DE62FF /* Grid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
 		048C38A71C9A375300AABE66 /* LevelOne.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = LevelOne.sks; sourceTree = "<group>"; };
 		048C38AB1C9A382A00AABE66 /* Tower.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tower.swift; sourceTree = "<group>"; };
@@ -69,7 +75,10 @@
 				041EA7211C99F77C00DF9631 /* AppDelegate.swift */,
 				048C38AD1C9A3B6500AABE66 /* Game Scenes */,
 				048C38AB1C9A382A00AABE66 /* Tower.swift */,
+				0448A7F91CD5665800705CF7 /* Enemy.swift */,
 				0459E62C1C9B0DEC00DE62FF /* Grid.swift */,
+				042F9FFB1CD7D05600B3A6D7 /* Tile.swift */,
+				042F9FFD1CD7D38A00B3A6D7 /* Path.swift */,
 				041EA7271C99F77D00DF9631 /* GameViewController.swift */,
 				041EA7291C99F77D00DF9631 /* Main.storyboard */,
 				041EA72C1C99F77D00DF9631 /* Assets.xcassets */,
@@ -165,9 +174,12 @@
 			files = (
 				041EA7261C99F77C00DF9631 /* MainMenu.swift in Sources */,
 				041EA7281C99F77D00DF9631 /* GameViewController.swift in Sources */,
+				0448A7FA1CD5665800705CF7 /* Enemy.swift in Sources */,
+				042F9FFC1CD7D05600B3A6D7 /* Tile.swift in Sources */,
 				048C38AC1C9A382A00AABE66 /* Tower.swift in Sources */,
 				041EA7221C99F77C00DF9631 /* AppDelegate.swift in Sources */,
 				049613BD1C9E0E0E0002F053 /* LevelOne.swift in Sources */,
+				042F9FFE1CD7D38A00B3A6D7 /* Path.swift in Sources */,
 				0459E62D1C9B0DEC00DE62FF /* Grid.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

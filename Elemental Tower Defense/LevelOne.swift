@@ -20,7 +20,7 @@ class LevelOne: SKScene {
     var fireTowers : [SKNode] = []
     var airTowers : [SKNode] = []
     var waterTowers : [SKNode] = []
-    var shadowPeople : [SKNode] = []
+    var shadowPeople : [Enemy] = []
     
     //Dragging tower to location in grid
     var dragTower = false
@@ -78,29 +78,21 @@ class LevelOne: SKScene {
         mainRock.position.x = 100
         mainRock.position.y = 100
         mainRock.name = "Main Rock"
-        mainRock.xScale = 0.3
-        mainRock.yScale = 0.3
         
         let mainWater = SKSpriteNode(imageNamed: "Water")
         mainWater.position.x = 300
         mainWater.position.y = 100
         mainWater.name = "Main Water"
-        mainWater.xScale = 0.5
-        mainWater.yScale = 0.5
         
         let mainAir = SKSpriteNode(imageNamed: "Air")
         mainAir.position.x = 500
         mainAir.position.y = 100
         mainAir.name = "Main Air"
-        mainAir.xScale = 0.5
-        mainAir.yScale = 0.5
         
         let mainFire = SKSpriteNode(imageNamed: "Fire")
         mainFire.position.x = 700
         mainFire.position.y = 100
         mainFire.name = "Main Fire"
-        mainFire.xScale = 0.5
-        mainFire.yScale = 0.5
         
         self.addChild(mainRock)
         self.addChild(mainAir)
@@ -118,6 +110,7 @@ class LevelOne: SKScene {
              * • Creates a new tower and adds it to the list
              * • Sets up other necessary variables
              */
+            print(self.nodeAtPoint(location).name)
             if self.nodeAtPoint(location).name == "Main Rock" {
                 let newTower = SKSpriteNode(imageNamed: "Rock")
                 rockTowers.append(newTower)
@@ -127,8 +120,8 @@ class LevelOne: SKScene {
                 dragTower = true
                 curTowerType = "Rock"
                 curTowerIndex = rockTowers.count - 1
-                newTower.xScale = 0.1
-                newTower.yScale = 0.1
+                newTower.xScale = 0.5
+                newTower.yScale = 0.5
             }
             else if self.nodeAtPoint(location).name == "Main Water" {
                 let newTower = SKSpriteNode(imageNamed: "Water")
@@ -139,8 +132,8 @@ class LevelOne: SKScene {
                 dragTower = true
                 curTowerType = "Water"
                 curTowerIndex = waterTowers.count - 1
-                newTower.xScale = 0.2
-                newTower.yScale = 0.2
+                newTower.xScale = 0.5
+                newTower.yScale = 0.5
             }
             else if self.nodeAtPoint(location).name == "Main Air" {
                 let newTower = SKSpriteNode(imageNamed: "Air")
@@ -151,8 +144,8 @@ class LevelOne: SKScene {
                 dragTower = true
                 curTowerType = "Air"
                 curTowerIndex = airTowers.count - 1
-                newTower.xScale = 0.2
-                newTower.yScale = 0.2
+                newTower.xScale = 0.5
+                newTower.yScale = 0.5
             }
             else if self.nodeAtPoint(location).name == "Main Fire" {
                 let newTower = SKSpriteNode(imageNamed: "Fire")
@@ -163,8 +156,8 @@ class LevelOne: SKScene {
                 dragTower = true
                 curTowerType = "Fire"
                 curTowerIndex = fireTowers.count - 1
-                newTower.xScale = 0.2
-                newTower.yScale = 0.2
+                newTower.xScale = 0.5
+                newTower.yScale = 0.5
             }
             else {
                 /**
@@ -186,6 +179,10 @@ class LevelOne: SKScene {
                         curTowerIndex = fireTowers.indexOf(self.nodeAtPoint(location))!
                     }
                     dragTower = true
+                }
+                else {
+                    curTowerType = "nil"
+                    curTowerIndex = -1
                 }
             }
         }
@@ -304,19 +301,19 @@ class LevelOne: SKScene {
         /**
          * Spawns enemies every five secons
          */
-        /*curTime = NSDate.timeIntervalSinceReferenceDate()
-         let elapsedTime = curTime - startTime
-         if elapsedTime >= 5 {
-         startTime = curTime
-         let newPerson = SKSpriteNode(imageNamed: "ShadowPerson")
-         newPerson.position.y = screenHeight / 2
-         shadowPeople.append(newPerson)
-         self.addChild(newPerson)
-         }
-         
-         for person in shadowPeople {
-         person.position.x += 5
-         }*/
+        curTime = NSDate.timeIntervalSinceReferenceDate()
+        let elapsedTime = curTime - startTime
+        if elapsedTime >= 5 {
+            startTime = curTime
+            let newPerson = Enemy(type: "Enemy", defenseType: "Enemy", health: 100, speed: 10, x: 5, y: 5, imgName: "ShadowPerson")
+            newPerson.position.y = screenHeight / 2
+            shadowPeople.append(newPerson)
+            self.addChild(newPerson)
+        }
+        
+        for person in shadowPeople {
+            person.position.x += 5
+        }
     }
     
     func nearestSpace(type: String) -> (x: Int, y: Int) {
