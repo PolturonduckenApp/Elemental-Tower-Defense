@@ -8,6 +8,14 @@
 
 import UIKit
 import SpriteKit
+import CoreGraphics
+import Foundation
+
+infix operator ** { associativity left precedence 170 }
+
+func ** (num: Double, power: Double) -> Double{
+    return pow(num, power)
+}
 
 class LevelOne: SKScene {
     //Determining screen size
@@ -16,7 +24,7 @@ class LevelOne: SKScene {
     var screenHeight : CGFloat = 0
     
     //List of different towers + enemy
-    var rockTowers : [SKNode] = []
+    var rockTowers : [Tower] = []
     var fireTowers : [SKNode] = []
     var airTowers : [SKNode] = []
     var waterTowers : [SKNode] = []
@@ -31,6 +39,7 @@ class LevelOne: SKScene {
     var curTowerType : String = "" //Current new tower type
     
     var grid : Grid! //Grid
+    var shortPath : [ShortPath] = []
     
     var curTowerIndex = 0 //Current new tower index
     
@@ -66,7 +75,13 @@ class LevelOne: SKScene {
         
         grid = Grid(locations: locations) //Sets up grid pt. 2
         
-        YOU_KNOW_WHAT_BETTER_IF_YOU_DONT_KNOW_WHAT_THIS_METHOD_DOES() //AVOID AT ALL COSTS DONT GO NEAR HERE
+        shortPath.append(ShortPath(x: 0, y: 10, number: 5))
+        shortPath.append(ShortPath(x: 4, y: 11, number: 1))
+        shortPath.append(ShortPath(x: 4, y: 12, number: 8))
+        shortPath.append(ShortPath(x: 11, y: 11, number: 1))
+        shortPath.append(ShortPath(x: 11, y: 10, number: 4))
+        
+        setUpPath(shortPath)
         
         //Level One Title
         let levelOneLabel = SKLabelNode(fontNamed: "Chalkduster")
@@ -81,6 +96,8 @@ class LevelOne: SKScene {
         let mainRock = SKSpriteNode(imageNamed: "Rock")
         mainRock.position.x = 100
         mainRock.position.y = 100
+        mainRock.xScale = 0.1
+        mainRock.yScale = 0.1
         mainRock.name = "Main Rock"
         
         let mainWater = SKSpriteNode(imageNamed: "Water")
@@ -116,7 +133,7 @@ class LevelOne: SKScene {
              */
             print(self.nodeAtPoint(location).name)
             if self.nodeAtPoint(location).name == "Main Rock" {
-                let newTower = SKSpriteNode(imageNamed: "Rock")
+                let newTower = Tower(element: "Rock", range: 100, power: 10, rate: 10, towerType: "turret", x: 0, y: 0, img: "Rock")
                 rockTowers.append(newTower)
                 self.addChild(newTower)
                 newTower.position = touch.locationInNode(self)
@@ -171,7 +188,7 @@ class LevelOne: SKScene {
                     self.nodeAtPoint(location).position = location
                     curTowerType = self.nodeAtPoint(location).name!
                     if curTowerType == "Rock" {
-                        curTowerIndex = rockTowers.indexOf(self.nodeAtPoint(location))!
+                        curTowerIndex = rockTowers.indexOf(self.nodeAtPoint(location) as! Tower)!
                     }
                     else if curTowerType == "Water" {
                         curTowerIndex = waterTowers.indexOf(self.nodeAtPoint(location))!
@@ -335,8 +352,27 @@ class LevelOne: SKScene {
                         }
                     }
                 }
+                
+                if person.health <= 0 {
+                    shadowPeople.removeAtIndex(shadowPeople.indexOf(person)!)
+                    person.removeFromParent()
+                }
+                
+                for tow in rockTowers {
+                    if inVicinity(person, tower: tow) {
+                        person.health = person.health - 50
+                        print(person.health)
+                    }
+                }
             }
         }
+    }
+    
+    func inVicinity(enemy: Enemy, tower: Tower) -> Bool {
+        if sqrt((Double(enemy.position.x - tower.position.x))**2 + (Double(enemy.position.y - tower.position.y))**2) < Double(tower.range) {
+            return true
+        }
+        return false
     }
     
     func nearestSpace(type: String) -> (x: Int, y: Int) {
@@ -438,11 +474,12 @@ class LevelOne: SKScene {
         return (diffX, diffY)
     }
     
-    func setUpPath(pathList: [CGPoint]) {
+    func setUpPath(pathList: [ShortPath]) {
         for point in pathList {
-            for _ in 0..<Int(point.y) {
-                grid.towerList[Int(point.x)][Int(point.y)] = true
-                let newPath = Path(forward: nil, backward: nil, x: Int(point.x), y: Int(point.y), img: "a")
+            for index in 0..<Int(point.number) {
+                grid.towerList[Int(point.x + index)][Int(point.y)] = true
+                let newPath = Path(forward: nil, backward: nil, x: Int(point.x + index), y: Int(point.y), img: "a")
+                print("\(point.x + index) \(point.y)")
                 self.addChild(newPath)
                 path.append(newPath)
             }
@@ -457,65 +494,13 @@ class LevelOne: SKScene {
                 path[index].forward = path[index + 1]
             }
         }
-    }
-    
-    func YOU_KNOW_WHAT_BETTER_IF_YOU_DONT_KNOW_WHAT_THIS_METHOD_DOES() {
-        grid.towerList[0][10] = true
-        grid.towerList[1][10] = true
-        grid.towerList[2][10] = true
-        grid.towerList[3][10] = true
-        grid.towerList[4][10] = true
-        grid.towerList[4][11] = true
-        grid.towerList[4][12] = true
-        grid.towerList[5][12] = true
-        grid.towerList[6][12] = true
-        grid.towerList[7][12] = true
-        grid.towerList[8][12] = true
-        grid.towerList[9][12] = true
-        grid.towerList[10][12] = true
-        grid.towerList[11][12] = true
-        grid.towerList[11][11] = true
-        grid.towerList[11][10] = true
-        grid.towerList[12][10] = true
-        grid.towerList[13][10] = true
-        grid.towerList[14][10] = true
-        
-        path.append(Path(forward: nil, backward: nil, x: 0, y: 10, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 1, y: 10, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 2, y: 10, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 3, y: 10, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 4, y: 10, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 4, y: 11, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 4, y: 12, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 5, y: 12, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 6, y: 12, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 7, y: 12, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 8, y: 12, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 9, y: 12, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 10, y: 12, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 11, y: 12, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 11, y: 11, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 11, y: 10, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 12, y: 10, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 13, y: 10, img: "a"))
-        path.append(Path(forward: nil, backward: nil, x: 14, y: 10, img: "a"))
         
         for paths in path {
-            self.addChild(paths)
+            //self.addChild(paths)
             paths.position = grid.locations[paths.xLoc][paths.yLoc]
             paths.xScale = 0.3
             paths.yScale = 0.3
             paths.zPosition = -10
-        }
-        
-        for index in 0..<path.count {
-            if index - 1 >= 0 {
-                path[index].backward = path[index - 1]
-            }
-            
-            if index + 1 < path.count {
-                path[index].forward = path[index + 1]
-            }
         }
     }
 }

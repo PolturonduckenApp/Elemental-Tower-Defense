@@ -12,7 +12,7 @@ import SpriteKit
 class Enemy: Tile {
     private var type : String!
     private var defenseType : String!
-    private var health : Int!
+    var health : Int!
     var gridX : Int!
     var gridY : Int!
 //    private var speed : Int!
