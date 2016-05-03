@@ -309,8 +309,8 @@ class LevelOne: SKScene {
         let elapsedTime = curTime - startTime
         
         if elapsedTime >= 1 {
+            startTime = curTime
             if countDown >= 0 {
-                startTime = curTime
                 let newPerson = Enemy(type: "Enemy", defenseType: "Enemy", health: 100, speed: 10, gridX: 0, gridY: 10, x: Int(grid.locations[0][10].x), y: Int(grid.locations[0][10].y), imgName: "ShadowPerson")
                 newPerson.position.y = screenHeight / 2
                 newPerson.xScale = 0.1
