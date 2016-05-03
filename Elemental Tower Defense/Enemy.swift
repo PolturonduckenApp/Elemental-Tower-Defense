@@ -3,8 +3,8 @@
 //  Elemental Tower Defense
 //
 //  Created by Andrew Turley on 4/30/16.
-//  Copyright © 2016 Polturonduken. All rights reserved.
-//
+//  Copyright © 2016 Polturonduken. All rights reserved. 
+//  Contact users CounterfeitLlama, DataManiac18, or NauticalTooth27 with questions
 
 import Foundation
 import SpriteKit
@@ -13,7 +13,7 @@ class Enemy: Tile {
     private var type : String!
     private var defenseType : String!
     private var health : Int!
-//    private var speed : Int!
+//    private var speed : Int! //I see, fast enemies vs slow "tank" enemies
     
     
     convenience init() {
