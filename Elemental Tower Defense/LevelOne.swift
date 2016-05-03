@@ -21,6 +21,7 @@ class LevelOne: SKScene {
     var airTowers : [SKNode] = []
     var waterTowers : [SKNode] = []
     var shadowPeople : [Enemy] = []
+    var path : [Path] = []
     
     //Dragging tower to location in grid
     var dragTower = false
@@ -40,6 +41,7 @@ class LevelOne: SKScene {
     //Time to spawn new enemy
     var startTime = NSDate.timeIntervalSinceReferenceDate()
     var curTime: NSTimeInterval = 0
+    var countDown = 10
     
     override func didMoveToView(view: SKView) {
         //Determines screen size
@@ -63,6 +65,8 @@ class LevelOne: SKScene {
         }
         
         grid = Grid(locations: locations) //Sets up grid pt. 2
+        
+        YOU_KNOW_WHAT_BETTER_IF_YOU_DONT_KNOW_WHAT_THIS_METHOD_DOES() //AVOID AT ALL COSTS DONT GO NEAR HERE
         
         //Level One Title
         let levelOneLabel = SKLabelNode(fontNamed: "Chalkduster")
@@ -303,16 +307,35 @@ class LevelOne: SKScene {
          */
         curTime = NSDate.timeIntervalSinceReferenceDate()
         let elapsedTime = curTime - startTime
-        if elapsedTime >= 5 {
-            startTime = curTime
-            let newPerson = Enemy(type: "Enemy", defenseType: "Enemy", health: 100, speed: 10, x: 5, y: 5, imgName: "ShadowPerson")
-            newPerson.position.y = screenHeight / 2
-            shadowPeople.append(newPerson)
-            self.addChild(newPerson)
-        }
         
-        for person in shadowPeople {
-            person.position.x += 5
+        if elapsedTime >= 1 {
+            if countDown >= 0 {
+                startTime = curTime
+                let newPerson = Enemy(type: "Enemy", defenseType: "Enemy", health: 100, speed: 10, gridX: 0, gridY: 10, x: Int(grid.locations[0][10].x), y: Int(grid.locations[0][10].y), imgName: "ShadowPerson")
+                newPerson.position.y = screenHeight / 2
+                newPerson.xScale = 0.1
+                newPerson.yScale = 0.1
+                shadowPeople.append(newPerson)
+                self.addChild(newPerson)
+                countDown = countDown - 1
+            }
+            
+            for person in shadowPeople {
+                if person.position.x > screenWidth {
+                    shadowPeople.removeAtIndex(shadowPeople.indexOf(person)!)
+                    person.removeFromParent()
+                }
+                else {
+                    for paths in path {
+                        if paths.xLoc == person.gridX && paths.yLoc == person.gridY && paths.forward != nil {
+                            person.gridX = paths.forward.xLoc
+                            person.gridY = paths.forward.yLoc
+                            person.position = grid.locations[person.gridX][person.gridY]
+                            break
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -413,5 +436,401 @@ class LevelOne: SKScene {
         let diffY = abs(targetY - baseY)
         
         return (diffX, diffY)
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    func YOU_KNOW_WHAT_BETTER_IF_YOU_DONT_KNOW_WHAT_THIS_METHOD_DOES() {
+        grid.towerList[0][10] = true
+        grid.towerList[1][10] = true
+        grid.towerList[2][10] = true
+        grid.towerList[3][10] = true
+        grid.towerList[4][10] = true
+        grid.towerList[4][11] = true
+        grid.towerList[4][12] = true
+        grid.towerList[5][12] = true
+        grid.towerList[6][12] = true
+        grid.towerList[7][12] = true
+        grid.towerList[8][12] = true
+        grid.towerList[9][12] = true
+        grid.towerList[10][12] = true
+        grid.towerList[11][12] = true
+        grid.towerList[11][11] = true
+        grid.towerList[11][10] = true
+        grid.towerList[12][10] = true
+        grid.towerList[13][10] = true
+        grid.towerList[14][10] = true
+        
+        path.append(Path(forward: nil, backward: nil, x: 0, y: 10, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 1, y: 10, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 2, y: 10, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 3, y: 10, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 4, y: 10, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 4, y: 11, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 4, y: 12, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 5, y: 12, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 6, y: 12, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 7, y: 12, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 8, y: 12, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 9, y: 12, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 10, y: 12, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 11, y: 12, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 11, y: 11, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 11, y: 10, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 12, y: 10, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 13, y: 10, img: "a"))
+        path.append(Path(forward: nil, backward: nil, x: 14, y: 10, img: "a"))
+        
+        for paths in path {
+            self.addChild(paths)
+            paths.position = grid.locations[paths.xLoc][paths.yLoc]
+            paths.xScale = 0.3
+            paths.yScale = 0.3
+            paths.zPosition = -10
+        }
+        
+        for index in 0..<path.count {
+            if index - 1 >= 0 {
+                path[index].backward = path[index - 1]
+            }
+            
+            if index + 1 < path.count {
+                path[index].forward = path[index + 1]
+            }
+        }
     }
 }

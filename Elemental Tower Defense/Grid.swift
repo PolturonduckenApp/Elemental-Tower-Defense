@@ -22,7 +22,7 @@ class Grid {
         
         for x in 0..<locations.count {
             self.towerList.append([false])
-            for y in 0..<20 {
+            for _ in 0..<20 {
                 self.towerList[x].append(false)
             }
         }
