@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0406A0C01CDA4F6E0030B1AA /* Projectile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0406A0BF1CDA4F6E0030B1AA /* Projectile.swift */; };
 		041EA7221C99F77C00DF9631 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EA7211C99F77C00DF9631 /* AppDelegate.swift */; };
 		041EA7241C99F77C00DF9631 /* MainMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 041EA7231C99F77C00DF9631 /* MainMenu.sks */; };
 		041EA7261C99F77C00DF9631 /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EA7251C99F77C00DF9631 /* MainMenu.swift */; };
@@ -26,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0406A0BF1CDA4F6E0030B1AA /* Projectile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Projectile.swift; sourceTree = "<group>"; };
 		041EA71E1C99F77C00DF9631 /* Elemental Tower Defense.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Elemental Tower Defense.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		041EA7211C99F77C00DF9631 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		041EA7231C99F77C00DF9631 /* MainMenu.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainMenu.sks; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 				048C38AD1C9A3B6500AABE66 /* Game Scenes */,
 				048C38AB1C9A382A00AABE66 /* Tower.swift */,
 				042FA0021CD92C4700B3A6D7 /* Turret.swift */,
+				0406A0BF1CDA4F6E0030B1AA /* Projectile.swift */,
 				0448A7F91CD5665800705CF7 /* Enemy.swift */,
 				0459E62C1C9B0DEC00DE62FF /* Grid.swift */,
 				042F9FFF1CD8F0F100B3A6D7 /* ShortPath.swift */,
@@ -137,6 +140,7 @@
 				TargetAttributes = {
 					041EA71D1C99F77C00DF9631 = {
 						CreatedOnToolsVersion = 7.2.1;
+						DevelopmentTeam = Z276H9S573;
 					};
 				};
 			};
@@ -178,6 +182,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0406A0C01CDA4F6E0030B1AA /* Projectile.swift in Sources */,
 				041EA7261C99F77C00DF9631 /* MainMenu.swift in Sources */,
 				042FA0011CD8F77500B3A6D7 /* ShortPath.swift in Sources */,
 				041EA7281C99F77D00DF9631 /* GameViewController.swift in Sources */,
@@ -301,11 +306,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "Elemental Tower Defense/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Polturonduken.Elemental-Tower-Defense";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -313,11 +321,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "Elemental Tower Defense/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Polturonduken.Elemental-Tower-Defense";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

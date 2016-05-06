@@ -25,16 +25,19 @@ class LevelOne: SKScene {
     
     //List of different towers + enemy
     var rockTowers : [Tower] = []
-    var fireTowers : [SKNode] = []
-    var airTowers : [SKNode] = []
-    var waterTowers : [SKNode] = []
+    var fireTowers : [Tower] = []
+    var airTowers : [Tower] = []
+    var waterTowers : [Tower] = []
     var shadowPeople : [Enemy] = []
+    var projectiles : [Projectile] = []
     var path : [Path] = []
     
     //Dragging tower to location in grid
     var dragTower = false
     var breakFromSearch = false
     var foundOpenSpace = false
+    
+    var projectile : Projectile!
     
     var curTowerType : String = "" //Current new tower type
     
@@ -66,9 +69,9 @@ class LevelOne: SKScene {
         heightSep = Double(screenHeight / 15)
         
         //Sets up grid
-        for x in 0..<20 {
+        for x in 0..<15 {
             locations.append([CGPoint(x: 0.0, y: 0.0)])
-            for y in 0..<20 {
+            for y in 0..<15 {
                 locations[x].append(CGPoint(x: widthSep * Double(x), y: heightSep * Double(y)))
             }
         }
@@ -145,7 +148,7 @@ class LevelOne: SKScene {
                 newTower.yScale = 0.5
             }
             else if self.nodeAtPoint(location).name == "Main Water" {
-                let newTower = SKSpriteNode(imageNamed: "Water")
+                let newTower = Tower(element: "Water", range: 100, power: 10, rate: 10, towerType: "turret", x: 0, y: 0, img: "Water")
                 waterTowers.append(newTower)
                 self.addChild(newTower)
                 newTower.position = touch.locationInNode(self)
@@ -157,7 +160,7 @@ class LevelOne: SKScene {
                 newTower.yScale = 0.5
             }
             else if self.nodeAtPoint(location).name == "Main Air" {
-                let newTower = SKSpriteNode(imageNamed: "Air")
+                let newTower = Tower(element: "Air", range: 100, power: 10, rate: 10, towerType: "turret", x: 0, y: 0, img: "Air")
                 airTowers.append(newTower)
                 self.addChild(newTower)
                 newTower.position = touch.locationInNode(self)
@@ -169,7 +172,7 @@ class LevelOne: SKScene {
                 newTower.yScale = 0.5
             }
             else if self.nodeAtPoint(location).name == "Main Fire" {
-                let newTower = SKSpriteNode(imageNamed: "Fire")
+                let newTower = Tower(element: "Fire", range: 100, power: 10, rate: 10, towerType: "turret", x: 0, y: 0, img: "Fire")
                 fireTowers.append(newTower)
                 self.addChild(newTower)
                 newTower.position = touch.locationInNode(self)
@@ -191,13 +194,13 @@ class LevelOne: SKScene {
                         curTowerIndex = rockTowers.indexOf(self.nodeAtPoint(location) as! Tower)!
                     }
                     else if curTowerType == "Water" {
-                        curTowerIndex = waterTowers.indexOf(self.nodeAtPoint(location))!
+                        curTowerIndex = waterTowers.indexOf(self.nodeAtPoint(location) as! Tower)!
                     }
                     else if curTowerType == "Air" {
-                        curTowerIndex = airTowers.indexOf(self.nodeAtPoint(location))!
+                        curTowerIndex = airTowers.indexOf(self.nodeAtPoint(location) as! Tower)!
                     }
                     else if curTowerType == "Fire" {
-                        curTowerIndex = fireTowers.indexOf(self.nodeAtPoint(location))!
+                        curTowerIndex = fireTowers.indexOf(self.nodeAtPoint(location) as! Tower)!
                     }
                     dragTower = true
                 }
@@ -319,6 +322,31 @@ class LevelOne: SKScene {
     }
     
     override func update(currentTime: CFTimeInterval) {
+        startWave()
+        if !projectiles.isEmpty {
+            for var index in 0..<projectiles.count {
+                if index >= projectiles.count {
+                    break
+                }
+                updateProjectile(index)
+                index = index + 0
+            }
+        }
+    }
+    
+    func updateProjectile(index: Int) {
+        let gee = Double(projectiles[index].direction.dx)**2 + Double(projectiles[index].direction.dy)**2
+        
+        projectiles[index].position.y += ((projectiles[index].direction.dy) * (CGFloat(gee) + projectiles[index].speed))/CGFloat(gee)
+        projectiles[index].position.x += ((projectiles[index].direction.dx) * (CGFloat(gee) + projectiles[index].speed))/CGFloat(gee)
+        
+        if projectiles[index].position.x > screenWidth || projectiles[index].position.x < 0 || projectiles[index].position.y > screenHeight || projectiles[index].position.y < 0 {
+            projectiles[index].removeFromParent()
+            projectiles.removeAtIndex(index)
+        }
+    }
+    
+    func startWave() {
         /**
          * Spawns enemies every five secons
          */
@@ -361,7 +389,44 @@ class LevelOne: SKScene {
                 for tow in rockTowers {
                     if inVicinity(person, tower: tow) {
                         person.health = person.health - 50
-                        print(person.health)
+                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.xLoc), dy: person.position.y - CGFloat(tow.yLoc)), image: "Spaceship")
+                        projectile.position.x = 0
+                        projectile.position.y = 0
+                        projectiles.append(projectile)
+                        self.addChild(projectile)
+                    }
+                }
+                
+                for tow in waterTowers {
+                    if inVicinity(person, tower: tow) {
+                        person.health = person.health - 50
+                        let projectile = Projectile(speed: 1, power: 100, direction: CGVector(dx: (person.position.x - CGFloat(tow.xLoc)) / 20, dy: (person.position.y - CGFloat(tow.yLoc)) / 20), image: "Spaceship")
+                        projectile.position.x = 0
+                        projectile.position.y = 0
+                        projectiles.append(projectile)
+                        self.addChild(projectile)
+                    }
+                }
+                
+                for tow in airTowers {
+                    if inVicinity(person, tower: tow) {
+                        person.health = person.health - 50
+                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.xLoc), dy: person.position.y - CGFloat(tow.yLoc)), image: "Spaceship")
+                        projectile.position.x = 0
+                        projectile.position.y = 0
+                        projectiles.append(projectile)
+                        self.addChild(projectile)
+                    }
+                }
+                
+                for tow in fireTowers {
+                    if inVicinity(person, tower: tow) {
+                        person.health = person.health - 50
+                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.xLoc), dy: person.position.y - CGFloat(tow.yLoc)), image: "Spaceship")
+                        projectile.position.x = 0
+                        projectile.position.y = 0
+                        projectiles.append(projectile)
+                        self.addChild(projectile)
                     }
                 }
             }
@@ -479,7 +544,6 @@ class LevelOne: SKScene {
             for index in 0..<Int(point.number) {
                 grid.towerList[Int(point.x + index)][Int(point.y)] = true
                 let newPath = Path(forward: nil, backward: nil, x: Int(point.x + index), y: Int(point.y), img: "a")
-                print("\(point.x + index) \(point.y)")
                 self.addChild(newPath)
                 path.append(newPath)
             }
