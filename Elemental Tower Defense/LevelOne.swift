@@ -400,9 +400,12 @@ class LevelOne: SKScene {
                 for tow in waterTowers {
                     if inVicinity(person, tower: tow) {
                         person.health = person.health - 50
-                        let projectile = Projectile(speed: 1, power: 100, direction: CGVector(dx: (person.position.x - CGFloat(tow.xLoc)) / 20, dy: (person.position.y - CGFloat(tow.yLoc)) / 20), image: "Spaceship")
-                        projectile.position.x = 0
-                        projectile.position.y = 0
+                        let projectile = Projectile(speed: 1, power: 100, direction: CGVector(dx: (person.position.x - CGFloat(tow.position.x)) / 20, dy: (person.position.y - CGFloat(tow.position.y)) / 20), image: "Spaceship")
+                        
+                        projectile.position.x = CGFloat(tow.position.x)
+                        projectile.position.y = CGFloat(tow.position.y)
+                        projectile.zRotation = -1 * tan((person.position.y - tow.position.y) / (person.position.x - tow.position.x))
+                        
                         projectiles.append(projectile)
                         self.addChild(projectile)
                     }
