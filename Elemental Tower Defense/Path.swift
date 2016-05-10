@@ -18,7 +18,7 @@ class Path: Tile {
     }
     
     init(forward: Path?, backward: Path?, x: Int, y: Int, img: String) {
-        super.init(xLoc: x, yLoc: y, name: img)
+        super.init(tileX: x, tileY: y, name: img)
         self.forward = forward
         self.backward = backward
     }

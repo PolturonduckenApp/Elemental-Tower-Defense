@@ -23,7 +23,7 @@ class Enemy: Tile {
     }
     
     init(type: String, defenseType: String, health: Int, speed: Int, gridX: Int, gridY: Int, x: Int, y: Int, imgName: String) {
-        super.init(xLoc: 0, yLoc: 0, name: imgName)
+        super.init(tileX: 0, tileY: 0, name: imgName)
         self.type = type
         self.defenseType = defenseType
         self.health = health

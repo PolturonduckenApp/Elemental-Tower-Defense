@@ -21,7 +21,7 @@ class Tower: Tile {
     }
     
     init(element: String, range: Int, power: Int, rate: Int, towerType: String, x: Int, y: Int, img: String) {
-        super.init(xLoc: x, yLoc: y, name: img)
+        super.init(tileX: x, tileY: y, name: img)
         self.element = element
         self.range = range
         self.power = power

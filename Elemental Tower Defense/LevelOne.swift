@@ -62,27 +62,29 @@ class LevelOne: SKScene {
         print(screenWidth)
         print(screenHeight)
         
-        var locations : [[CGPoint]] = [[CGPoint(x: 0.0, y: 0.0)]] //Locations of towers
+        var locations : [[Tile]] = [[]] //Locations of towers
         
         //Attempts to determine distance between tiles
-        widthSep = Double(screenWidth / 15)
-        heightSep = Double(screenHeight / 15)
+        widthSep = Double(screenWidth / 8)
+        heightSep = Double(screenHeight / 6)
         
         //Sets up grid
-        for x in 0..<15 {
-            locations.append([CGPoint(x: 0.0, y: 0.0)])
-            for y in 0..<15 {
-                locations[x].append(CGPoint(x: widthSep * Double(x), y: heightSep * Double(y)))
+        for x in 0..<8 {
+            locations.append([Tile(tileX: -1, tileY: -1, name: "remove")])
+            for y in 0..<6 {
+                locations[x].append(Tile(tileX: x, tileY: y, name: "AirClipArt")) //name to be changed
             }
         }
         
-        grid = Grid(locations: locations) //Sets up grid pt. 2
+        for x in 0..<8 {
+            locations[x].removeAtIndex(0)
+        }
         
-        shortPath.append(ShortPath(x: 0, y: 10, number: 5))
-        shortPath.append(ShortPath(x: 4, y: 11, number: 1))
-        shortPath.append(ShortPath(x: 4, y: 12, number: 8))
-        shortPath.append(ShortPath(x: 11, y: 11, number: 1))
-        shortPath.append(ShortPath(x: 11, y: 10, number: 4))
+        grid = Grid(towerList: locations) //Sets up grid pt. 2
+        
+        shortPath.append(ShortPath(x: 0, y: 3, number: 3))
+        shortPath.append(ShortPath(x: 4, y: 4, number: 1))
+        shortPath.append(ShortPath(x: 4, y: 5, number: 4))
         
         setUpPath(shortPath)
         
@@ -94,29 +96,30 @@ class LevelOne: SKScene {
         levelOneLabel.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame) + 300)
         
         /**
-         * Sets up icons
-         */
-        let mainRock = SKSpriteNode(imageNamed: "Rock")
-        mainRock.position.x = 100
-        mainRock.position.y = 100
+        * Sets up icons V2
+        * fix separation to make them span accross the whole screen
+        */
+        let mainRock = Tile(tileX: 0, tileY: 0, name: "Main Rock'")
+        grid.towerList[0][0] = mainRock
+        mainRock.position.x = 64 //may not need this but leaving it for now
+        mainRock.position.y = 64
         mainRock.xScale = 0.1
         mainRock.yScale = 0.1
-        mainRock.name = "Main Rock"
+
+        let mainWater = Tile(tileX: 0, tileY: 0, name: "Main Water'")
+        grid.towerList[2][0] = mainWater
+        mainWater.position.x = 192
+        mainWater.position.y = 64
         
-        let mainWater = SKSpriteNode(imageNamed: "Water")
-        mainWater.position.x = 300
-        mainWater.position.y = 100
-        mainWater.name = "Main Water"
+        let mainAir = Tile(tileX: 0, tileY: 0, name: "Main Air'")
+        grid.towerList[4][0] = mainAir
+        mainAir.position.x = 320
+        mainAir.position.y = 64
         
-        let mainAir = SKSpriteNode(imageNamed: "Air")
-        mainAir.position.x = 500
-        mainAir.position.y = 100
-        mainAir.name = "Main Air"
-        
-        let mainFire = SKSpriteNode(imageNamed: "Fire")
-        mainFire.position.x = 700
-        mainFire.position.y = 100
-        mainFire.name = "Main Fire"
+        let mainFire = Tile(tileX: 0, tileY: 0, name: "Main Fire'")
+        grid.towerList[6][0] = mainRock
+        mainFire.position.x = 448
+        mainFire.position.y = 64
         
         self.addChild(mainRock)
         self.addChild(mainAir)
@@ -128,6 +131,7 @@ class LevelOne: SKScene {
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         for touch in touches {
             let location = touch.locationInNode(self)//Find the location of the touch
+            print(touch.locationInNode(self).x)
             
             /**
              * • Determines which tower
@@ -136,7 +140,7 @@ class LevelOne: SKScene {
              */
             print(self.nodeAtPoint(location).name)
             if self.nodeAtPoint(location).name == "Main Rock" {
-                let newTower = Tower(element: "Rock", range: 100, power: 10, rate: 10, towerType: "turret", x: 0, y: 0, img: "Rock")
+                let newTower = Tower(element: "Rock", range: 100, power: 10, rate: 10, towerType: "turret", x:0 , y: 0, img: "Rock")//0 ≤ x ≤ 8, 0 ≤ y ≤ 6
                 rockTowers.append(newTower)
                 self.addChild(newTower)
                 newTower.position = touch.locationInNode(self)
@@ -239,58 +243,49 @@ class LevelOne: SKScene {
         /**
          * Alright here is where things get complicated
          */
-        for x in 0..<grid.locations.count {
-            for y in 0..<grid.locations[x].count {
+       
                 /**
                  * So as far as I can tell this is what this does:
                  * • Determines type of the new Tower type
                  * • Determines if there is an open space where the tower is dropped
                  * • If there is an open space, break from search, signal a found open space, put the tower there
+                 * So I symplified this to check if the tile the tower is touching is occupied or not, still in testing mode
                  */
                 if curTowerType == "Rock" {
-                    let close = nearestSpace("Rock")
-                    if Double(rockTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(rockTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
-                        rockTowers[curTowerIndex].position = grid.locations[close.x][close.y]
-                        grid.towerList[close.x][close.y] = true
+                    if grid.towerList[Int(rockTowers[curTowerIndex].position.x) / Int(widthSep)][Int(rockTowers[curTowerIndex].position.y) / Int(heightSep)].name == "AirClipArt" { //eventually change away from AirClipArt
+                        grid.towerList[Int(rockTowers[curTowerIndex].position.x) / Int(widthSep)][Int(rockTowers[curTowerIndex].position.y) / Int(heightSep)] = rockTowers[curTowerIndex]
                         breakFromSearch = true
                         foundOpenSpace = true
-                        break
                     }
                 }
                 else if curTowerType == "Air" {
-                    let close = nearestSpace("Air")
-                    if Double(airTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(airTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(airTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(airTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
-                        airTowers[curTowerIndex].position = grid.locations[close.x][close.y]
-                        grid.towerList[close.x][close.y] = true
+                    if grid.towerList[Int(airTowers[curTowerIndex].position.x) / Int(widthSep)][Int(airTowers[curTowerIndex].position.y) / Int(heightSep)].name == "AirClipArt" {
+                        grid.towerList[Int(airTowers[curTowerIndex].position.x) / Int(widthSep)][Int(airTowers[curTowerIndex].position.y) / Int(heightSep)] = airTowers[curTowerIndex]
                         breakFromSearch = true
                         foundOpenSpace = true
-                        break
+
                     }
                 }
                 else if curTowerType == "Water" {
-                    let close = nearestSpace("Water")
-                    if Double(waterTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(waterTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
-                        waterTowers[curTowerIndex].position = grid.locations[close.x][close.y]
-                        grid.towerList[close.x][close.y] = true
+                    if grid.towerList[Int(waterTowers[curTowerIndex].position.x) / Int(widthSep)][Int(waterTowers[curTowerIndex].position.y) / Int(heightSep)].name == "AirClipArt" {
+                        grid.towerList[Int(waterTowers[curTowerIndex].position.x) / Int(widthSep)][Int(waterTowers[curTowerIndex].position.y) / Int(heightSep)] = waterTowers[curTowerIndex]
                         breakFromSearch = true
                         foundOpenSpace = true
-                        break
+
                     }
                 }
                 else if curTowerType == "Fire" {
-                    let close = nearestSpace("Fire")
-                    if Double(fireTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(fireTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
-                        fireTowers[curTowerIndex].position = grid.locations[close.x][close.y]
-                        grid.towerList[close.x][close.y] = true
+                    if grid.towerList[Int(fireTowers[curTowerIndex].position.x) / Int(widthSep)][Int(fireTowers[curTowerIndex].position.y) / Int(heightSep)].name == "AirClipArt" {
+                        grid.towerList[Int(fireTowers[curTowerIndex].position.x) / Int(widthSep)][Int(fireTowers[curTowerIndex].position.y) / Int(heightSep)] = fireTowers[curTowerIndex]
                         breakFromSearch = true
                         foundOpenSpace = true
-                        break
+
                     }
-                }
-            }
+                
+        
             if breakFromSearch == true {
                 breakFromSearch = false
-                break
+                
             }
         }
         
@@ -356,7 +351,7 @@ class LevelOne: SKScene {
         if elapsedTime >= 1 {
             startTime = curTime
             if countDown >= 0 {
-                let newPerson = Enemy(type: "Enemy", defenseType: "Enemy", health: 100, speed: 10, gridX: 0, gridY: 10, x: Int(grid.locations[0][10].x), y: Int(grid.locations[0][10].y), imgName: "ShadowPerson")
+                let newPerson = Enemy(type: "Enemy", defenseType: "Enemy", health: 100, speed: 10, gridX: 0, gridY: 4, x: Int(grid.towerList[0][4].tileX), y: Int(grid.towerList[0][4].tileY), imgName: "ShadowPerson")
                 newPerson.position.y = screenHeight / 2
                 newPerson.xScale = 0.1
                 newPerson.yScale = 0.1
@@ -372,10 +367,10 @@ class LevelOne: SKScene {
                 }
                 else {
                     for paths in path {
-                        if paths.xLoc == person.gridX && paths.yLoc == person.gridY && paths.forward != nil {
-                            person.gridX = paths.forward.xLoc
-                            person.gridY = paths.forward.yLoc
-                            person.position = grid.locations[person.gridX][person.gridY]
+                        if paths.tileX == person.gridX && paths.tileY == person.gridY && paths.forward != nil {
+                            person.gridX = paths.forward.tileX
+                            person.gridY = paths.forward.tileY
+                            person.position = grid.towerList[person.gridX][person.gridY].position
                             break
                         }
                     }
@@ -389,7 +384,7 @@ class LevelOne: SKScene {
                 for tow in rockTowers {
                     if inVicinity(person, tower: tow) {
                         person.health = person.health - 50
-                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.xLoc), dy: person.position.y - CGFloat(tow.yLoc)), image: "Spaceship")
+                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.tileX), dy: person.position.y - CGFloat(tow.tileY)), image: "Taco!!")
                         projectile.position.x = 0
                         projectile.position.y = 0
                         projectiles.append(projectile)
@@ -400,7 +395,7 @@ class LevelOne: SKScene {
                 for tow in waterTowers {
                     if inVicinity(person, tower: tow) {
                         person.health = person.health - 50
-                        let projectile = Projectile(speed: 1, power: 100, direction: CGVector(dx: (person.position.x - CGFloat(tow.xLoc)) / 20, dy: (person.position.y - CGFloat(tow.yLoc)) / 20), image: "Spaceship")
+                        let projectile = Projectile(speed: 1, power: 100, direction: CGVector(dx: (person.position.x - CGFloat(tow.tileX)) / 20, dy: (person.position.y - CGFloat(tow.tileY)) / 20), image: "Spaceship")
                         projectile.position.x = 0
                         projectile.position.y = 0
                         projectiles.append(projectile)
@@ -411,7 +406,7 @@ class LevelOne: SKScene {
                 for tow in airTowers {
                     if inVicinity(person, tower: tow) {
                         person.health = person.health - 50
-                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.xLoc), dy: person.position.y - CGFloat(tow.yLoc)), image: "Spaceship")
+                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.tileX), dy: person.position.y - CGFloat(tow.tileY)), image: "Spaceship")
                         projectile.position.x = 0
                         projectile.position.y = 0
                         projectiles.append(projectile)
@@ -422,7 +417,7 @@ class LevelOne: SKScene {
                 for tow in fireTowers {
                     if inVicinity(person, tower: tow) {
                         person.health = person.health - 50
-                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.xLoc), dy: person.position.y - CGFloat(tow.yLoc)), image: "Spaceship")
+                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.tileX), dy: person.position.y - CGFloat(tow.tileY)), image: "Spaceship")
                         projectile.position.x = 0
                         projectile.position.y = 0
                         projectiles.append(projectile)
@@ -449,11 +444,11 @@ class LevelOne: SKScene {
         
         if type == "Rock" { //Takes in the type of the tower
             //Iterates through each and every possible cell
-            for x in 0..<grid!.locations.count {
-                for y in 0..<grid!.locations[x].count {
+            for x in 0..<grid!.towerList.count {
+                for y in 0..<grid!.towerList[x].count {
                     //If the tower is near an open space.....
-                    if Double(rockTowers[curTowerIndex].position.x) - widthSep <= Double(grid!.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.x) + widthSep >= Double(grid!.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.y) - widthSep <= Double(grid!.locations[x][y].y) && Double(rockTowers[curTowerIndex].position.y) + widthSep >= Double(grid!.locations[x][y].y) && grid!.towerList[x][y] == false {
-                        let temp = disBetweenPoints(rockTowers[curTowerIndex].position, target: grid!.locations[x][y]) //....finds difference between the two points....
+                    if Double(rockTowers[curTowerIndex].position.x) - widthSep <= Double(grid!.towerList[x][y].tileX) && Double(rockTowers[curTowerIndex].position.x) + widthSep >= Double(grid!.towerList[x][y].tileX) && Double(rockTowers[curTowerIndex].position.y) - widthSep <= Double(grid!.towerList[x][y].tileY) && Double(rockTowers[curTowerIndex].position.y) + widthSep >= Double(grid!.towerList[x][y].tileY) && grid!.towerList[x][y] == false {
+                        let temp = disBetweenPoints(rockTowers[curTowerIndex].position, target: grid!.towerList[x][y].position) //....finds difference between the two points....
                         
                         //....and if said difference is smaller than the smallest difference so far, set it as the new smallest difference and save the index
                         if temp.x < smallestDiffX && temp.y < smallestDiffY {
@@ -468,11 +463,11 @@ class LevelOne: SKScene {
         }
         else if type == "Water" { //Takes in the type of the tower
             //Iterates through each and every possible cell
-            for x in 0..<grid!.locations.count {
-                for y in 0..<grid!.locations[x].count {
+            for x in 0..<grid!.towerList.count {
+                for y in 0..<grid!.towerList[x].count {
                     //If the tower is near an open space.....
-                    if Double(waterTowers[curTowerIndex].position.x) - widthSep <= Double(grid!.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.x) + widthSep >= Double(grid!.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.y) - widthSep <= Double(grid!.locations[x][y].y) && Double(waterTowers[curTowerIndex].position.y) + widthSep >= Double(grid!.locations[x][y].y) && grid!.towerList[x][y] == false {
-                        let temp = disBetweenPoints(waterTowers[curTowerIndex].position, target: grid!.locations[x][y]) //....finds difference between the two points....
+                    if Double(waterTowers[curTowerIndex].position.x) - widthSep <= Double(grid!.towerList[x][y].tileX) && Double(waterTowers[curTowerIndex].position.x) + widthSep >= Double(grid!.towerList[x][y].tileX) && Double(waterTowers[curTowerIndex].position.y) - widthSep <= Double(grid!.towerList[x][y].tileY) && Double(waterTowers[curTowerIndex].position.y) + widthSep >= Double(grid!.towerList[x][y].tileY) && grid!.towerList[x][y] == false {
+                        let temp = disBetweenPoints(waterTowers[curTowerIndex].position, target: grid!.towerList[x][y].position) //....finds difference between the two points....
                         
                         //....and if said difference is smaller than the smallest difference so far, set it as the new smallest difference and save the index
                         if temp.x < smallestDiffX && temp.y < smallestDiffY {
@@ -486,11 +481,11 @@ class LevelOne: SKScene {
             }
         } else if type == "Air" { //Takes in the type of the tower
             //Iterates through each and every possible cell
-            for x in 0..<grid!.locations.count {
-                for y in 0..<grid!.locations[x].count {
+            for x in 0..<grid!.towerList.count {
+                for y in 0..<grid!.towerList[x].count {
                     //If the tower is near an open space.....
-                    if Double(airTowers[curTowerIndex].position.x) - widthSep <= Double(grid!.locations[x][y].x) && Double(airTowers[curTowerIndex].position.x) + widthSep >= Double(grid!.locations[x][y].x) && Double(airTowers[curTowerIndex].position.y) - widthSep <= Double(grid!.locations[x][y].y) && Double(airTowers[curTowerIndex].position.y) + widthSep >= Double(grid!.locations[x][y].y) && grid!.towerList[x][y] == false {
-                        let temp = disBetweenPoints(airTowers[curTowerIndex].position, target: grid!.locations[x][y]) //....finds difference between the two points....
+                    if Double(airTowers[curTowerIndex].position.x) - widthSep <= Double(grid!.towerList[x][y].tileX) && Double(airTowers[curTowerIndex].position.x) + widthSep >= Double(grid!.towerList[x][y].tileX) && Double(airTowers[curTowerIndex].position.y) - widthSep <= Double(grid!.towerList[x][y].tileY) && Double(airTowers[curTowerIndex].position.y) + widthSep >= Double(grid!.towerList[x][y].tileY) && grid!.towerList[x][y] == false {
+                        let temp = disBetweenPoints(airTowers[curTowerIndex].position, target: grid!.towerList[x][y].position) //....finds difference between the two points....
                         
                         //....and if said difference is smaller than the smallest difference so far, set it as the new smallest difference and save the index
                         if temp.x < smallestDiffX && temp.y < smallestDiffY {
@@ -504,11 +499,11 @@ class LevelOne: SKScene {
             }
         } else if type == "Fire" { //Takes in the type of the tower
             //Iterates through each and every possible cell
-            for x in 0..<grid!.locations.count {
-                for y in 0..<grid!.locations[x].count {
+            for x in 0..<grid!.towerList.count {
+                for y in 0..<grid!.towerList[x].count {
                     //If the tower is near an open space.....
-                    if Double(fireTowers[curTowerIndex].position.x) - widthSep <= Double(grid!.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.x) + widthSep >= Double(grid!.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.y) - widthSep <= Double(grid!.locations[x][y].y) && Double(fireTowers[curTowerIndex].position.y) + widthSep >= Double(grid!.locations[x][y].y) && grid!.towerList[x][y] == false {
-                        let temp = disBetweenPoints(fireTowers[curTowerIndex].position, target: grid!.locations[x][y]) //....finds difference between the two points....
+                    if Double(fireTowers[curTowerIndex].position.x) - widthSep <= Double(grid!.towerList[x][y].tileX) && Double(fireTowers[curTowerIndex].position.x) + widthSep >= Double(grid!.towerList[x][y].tileX) && Double(fireTowers[curTowerIndex].position.y) - widthSep <= Double(grid!.towerList[x][y].tileY) && Double(fireTowers[curTowerIndex].position.y) + widthSep >= Double(grid!.towerList[x][y].tileY) && grid!.towerList[x][y] == false {
+                        let temp = disBetweenPoints(fireTowers[curTowerIndex].position, target: grid!.towerList[x][y].position) //....finds difference between the two points....
                         
                         //....and if said difference is smaller than the smallest difference so far, set it as the new smallest difference and save the index
                         if temp.x < smallestDiffX && temp.y < smallestDiffY {
@@ -542,8 +537,8 @@ class LevelOne: SKScene {
     func setUpPath(pathList: [ShortPath]) {
         for point in pathList {
             for index in 0..<Int(point.number) {
-                grid.towerList[Int(point.x + index)][Int(point.y)] = true
-                let newPath = Path(forward: nil, backward: nil, x: Int(point.x + index), y: Int(point.y), img: "a")
+                let newPath = Path(forward: nil, backward: nil, x: point.x + index, y: point.y, img: "AirClipArt")
+                //grid.towerList[point.x + index][point.y] = newPath
                 self.addChild(newPath)
                 path.append(newPath)
             }
@@ -561,7 +556,8 @@ class LevelOne: SKScene {
         
         for paths in path {
             //self.addChild(paths)
-            paths.position = grid.locations[paths.xLoc][paths.yLoc]
+            print(paths.tileY)
+            paths.position = grid.towerList[paths.tileX][paths.tileY].position
             paths.xScale = 0.3
             paths.yScale = 0.3
             paths.zPosition = -10
