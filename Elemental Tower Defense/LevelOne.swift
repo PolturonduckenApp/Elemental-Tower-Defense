@@ -390,8 +390,15 @@ class LevelOne: SKScene {
                     if inVicinity(person, tower: tow) {
                         person.health = person.health - 50
                         let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.xLoc), dy: person.position.y - CGFloat(tow.yLoc)), image: "Spaceship")
-                        projectile.position.x = 0
-                        projectile.position.y = 0
+                        
+                        projectile.position.x = tow.position.x
+                        projectile.position.y = tow.position.y
+                        
+                        projectile.rotate(person, tower: tow)
+                        
+                        projectile.size.width = 20
+                        projectile.size.width = 20
+                        
                         projectiles.append(projectile)
                         self.addChild(projectile)
                     }
@@ -402,9 +409,13 @@ class LevelOne: SKScene {
                         person.health = person.health - 50
                         let projectile = Projectile(speed: 1, power: 100, direction: CGVector(dx: (person.position.x - CGFloat(tow.position.x)) / 20, dy: (person.position.y - CGFloat(tow.position.y)) / 20), image: "Spaceship")
                         
-                        projectile.position.x = CGFloat(tow.position.x)
-                        projectile.position.y = CGFloat(tow.position.y)
-                        projectile.zRotation = -1 * tan((person.position.y - tow.position.y) / (person.position.x - tow.position.x))
+                        projectile.position.x = tow.position.x
+                        projectile.position.y = tow.position.y
+                        
+                        projectile.rotate(person, tower: tow)
+                        
+                        projectile.size.width = 20
+                        projectile.size.width = 20
                         
                         projectiles.append(projectile)
                         self.addChild(projectile)
@@ -415,8 +426,15 @@ class LevelOne: SKScene {
                     if inVicinity(person, tower: tow) {
                         person.health = person.health - 50
                         let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.xLoc), dy: person.position.y - CGFloat(tow.yLoc)), image: "Spaceship")
-                        projectile.position.x = 0
-                        projectile.position.y = 0
+                        
+                        projectile.position.x = tow.position.x
+                        projectile.position.y = tow.position.y
+                        
+                        projectile.rotate(person, tower: tow)
+                        
+                        projectile.size.width = 20
+                        projectile.size.width = 20
+                        
                         projectiles.append(projectile)
                         self.addChild(projectile)
                     }
@@ -426,8 +444,90 @@ class LevelOne: SKScene {
                     if inVicinity(person, tower: tow) {
                         person.health = person.health - 50
                         let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.xLoc), dy: person.position.y - CGFloat(tow.yLoc)), image: "Spaceship")
-                        projectile.position.x = 0
-                        projectile.position.y = 0
+                        
+                        projectile.position.x = tow.position.x
+                        projectile.position.y = tow.position.y
+                        
+                        projectile.rotate(person, tower: tow)
+                        
+                        projectile.size.width = 20
+                        projectile.size.width = 20
+                        
+                        projectiles.append(projectile)
+                        self.addChild(projectile)
+                    }
+                }
+            }
+        }
+        else if elapsedTime >= 0.5 {
+            for person in shadowPeople {
+                for tow in rockTowers {
+                    if inVicinity(person, tower: tow) {
+                        person.health = person.health - 50
+                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.xLoc), dy: person.position.y - CGFloat(tow.yLoc)), image: "Spaceship")
+                        
+                        projectile.position.x = tow.position.x
+                        projectile.position.y = tow.position.y
+                        
+                        projectile.rotate(person, tower: tow)
+                        
+                        projectile.size.width = 20
+                        projectile.size.width = 20
+                        
+                        projectiles.append(projectile)
+                        self.addChild(projectile)
+                    }
+                }
+                
+                for tow in waterTowers {
+                    if inVicinity(person, tower: tow) {
+                        person.health = person.health - 50
+                        let projectile = Projectile(speed: 1, power: 100, direction: CGVector(dx: (person.position.x - CGFloat(tow.position.x)) / 20, dy: (person.position.y - CGFloat(tow.position.y)) / 20), image: "Spaceship")
+                        
+                        projectile.position.x = tow.position.x
+                        projectile.position.y = tow.position.y
+                        
+                        projectile.rotate(person, tower: tow)
+                        
+                        projectile.size.width = 20
+                        projectile.size.width = 20
+                        
+                        projectiles.append(projectile)
+                        self.addChild(projectile)
+                    }
+                }
+                
+                for tow in airTowers {
+                    if inVicinity(person, tower: tow) {
+                        person.health = person.health - 50
+                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.xLoc), dy: person.position.y - CGFloat(tow.yLoc)), image: "Spaceship")
+                        
+                        projectile.position.x = tow.position.x
+                        projectile.position.y = tow.position.y
+                        
+                        projectile.rotate(person, tower: tow)
+                        
+                        projectile.size.width = 20
+                        projectile.size.width = 20
+                        
+                        projectiles.append(projectile)
+                        self.addChild(projectile)
+                    }
+                }
+                
+                for tow in fireTowers {
+                    if inVicinity(person, tower: tow) {
+                        person.health = person.health - 50
+                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.xLoc), dy: person.position.y - CGFloat(tow.yLoc)), image: "Spaceship")
+                        
+                        projectile.position.x = tow.position.x
+                        projectile.position.y = tow.position.y
+                        
+                        projectile.rotate(person, tower: tow)
+                        
+                        projectile.size.width = 20
+                        projectile.size.width = 20
+                        
                         projectiles.append(projectile)
                         self.addChild(projectile)
                     }

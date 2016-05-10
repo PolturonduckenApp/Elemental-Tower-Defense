@@ -21,6 +21,7 @@
 		042FA0031CD92C4700B3A6D7 /* Turret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042FA0021CD92C4700B3A6D7 /* Turret.swift */; };
 		0448A7FA1CD5665800705CF7 /* Enemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0448A7F91CD5665800705CF7 /* Enemy.swift */; };
 		0459E62D1C9B0DEC00DE62FF /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0459E62C1C9B0DEC00DE62FF /* Grid.swift */; };
+		046A3D091CE15CB4008303B2 /* SKSpriteNode Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046A3D081CE15CB4008303B2 /* SKSpriteNode Extension.swift */; };
 		048C38A81C9A375300AABE66 /* LevelOne.sks in Resources */ = {isa = PBXBuildFile; fileRef = 048C38A71C9A375300AABE66 /* LevelOne.sks */; };
 		048C38AC1C9A382A00AABE66 /* Tower.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048C38AB1C9A382A00AABE66 /* Tower.swift */; };
 		049613BD1C9E0E0E0002F053 /* LevelOne.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049613BC1C9E0E0E0002F053 /* LevelOne.swift */; };
@@ -43,6 +44,7 @@
 		042FA0021CD92C4700B3A6D7 /* Turret.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Turret.swift; sourceTree = "<group>"; };
 		0448A7F91CD5665800705CF7 /* Enemy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enemy.swift; sourceTree = "<group>"; };
 		0459E62C1C9B0DEC00DE62FF /* Grid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
+		046A3D081CE15CB4008303B2 /* SKSpriteNode Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKSpriteNode Extension.swift"; sourceTree = "<group>"; };
 		048C38A71C9A375300AABE66 /* LevelOne.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = LevelOne.sks; sourceTree = "<group>"; };
 		048C38AB1C9A382A00AABE66 /* Tower.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tower.swift; sourceTree = "<group>"; };
 		049613BC1C9E0E0E0002F053 /* LevelOne.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelOne.swift; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 				041EA7231C99F77C00DF9631 /* MainMenu.sks */,
 				041EA7251C99F77C00DF9631 /* MainMenu.swift */,
 				049613BC1C9E0E0E0002F053 /* LevelOne.swift */,
+				046A3D081CE15CB4008303B2 /* SKSpriteNode Extension.swift */,
 				048C38A71C9A375300AABE66 /* LevelOne.sks */,
 			);
 			name = "Game Scenes";
@@ -192,6 +195,7 @@
 				042FA0031CD92C4700B3A6D7 /* Turret.swift in Sources */,
 				041EA7221C99F77C00DF9631 /* AppDelegate.swift in Sources */,
 				049613BD1C9E0E0E0002F053 /* LevelOne.swift in Sources */,
+				046A3D091CE15CB4008303B2 /* SKSpriteNode Extension.swift in Sources */,
 				042F9FFE1CD7D38A00B3A6D7 /* Path.swift in Sources */,
 				0459E62D1C9B0DEC00DE62FF /* Grid.swift in Sources */,
 			);
