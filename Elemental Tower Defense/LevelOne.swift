@@ -62,6 +62,28 @@ class LevelOne: SKScene {
         print(screenWidth)
         print(screenHeight)
         
+        let newNormalEnemy = SKLabelNode(fontNamed: "Chalkduster")
+        newNormalEnemy.text = "Spawn Normal"
+        newNormalEnemy.name = "SpawnNormal"
+        newNormalEnemy.fontSize = 45
+        newNormalEnemy.position = CGPoint(x: screenWidth * 1/4, y: screenHeight * 8/9)
+        self.addChild(newNormalEnemy)
+        
+        let newInvincible = SKLabelNode(fontNamed: "Chalkduster")
+        newInvincible.text = "Spawn Invincible"
+        newInvincible.name = "SpawnInvincible"
+        newInvincible.fontSize = 45
+        newInvincible.position = CGPoint(x: screenWidth * 3/4, y: screenHeight * 8/9)
+        self.addChild(newInvincible)
+        
+        //Level One Title
+        let levelOneLabel = SKLabelNode(fontNamed: "Chalkduster")
+        levelOneLabel.text = "Level One"
+        levelOneLabel.name = "Level Label"
+        levelOneLabel.fontSize = 45
+        levelOneLabel.position = CGPoint(x: CGRectGetMidX(self.frame), y: screenHeight * 7/9 + 43)
+        
+        
         var locations : [[CGPoint]] = [[CGPoint(x: 0.0, y: 0.0)]] //Locations of towers
         
         //Attempts to determine distance between tiles
@@ -85,13 +107,6 @@ class LevelOne: SKScene {
         shortPath.append(ShortPath(x: 11, y: 10, number: 4))
         
         setUpPath(shortPath)
-        
-        //Level One Title
-        let levelOneLabel = SKLabelNode(fontNamed: "Chalkduster")
-        levelOneLabel.text = "Level One"
-        levelOneLabel.name = "Level Label"
-        levelOneLabel.fontSize = 45
-        levelOneLabel.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame) + 300)
         
         /**
          * Sets up icons
@@ -148,7 +163,7 @@ class LevelOne: SKScene {
                 newTower.yScale = 0.5
             }
             else if self.nodeAtPoint(location).name == "Main Water" {
-                let newTower = Tower(element: "Water", range: 100, power: 10, rate: 10, towerType: "turret", x: 0, y: 0, img: "Water")
+                let newTower = Tower(element: "Water", range: 200, power: 10, rate: 10, towerType: "turret", x: 0, y: 0, img: "Water")
                 waterTowers.append(newTower)
                 self.addChild(newTower)
                 newTower.position = touch.locationInNode(self)
@@ -183,7 +198,23 @@ class LevelOne: SKScene {
                 newTower.xScale = 0.5
                 newTower.yScale = 0.5
             }
-            else {
+            else if self.nodeAtPoint(location).name == "SpawnNormal" {
+                let newPerson = Enemy(type: "Enemy", defenseType: "Enemy", health: 100, speed: 10, gridX: 0, gridY: 10, x: Int(grid.locations[0][10].x), y: Int(grid.locations[0][10].y), imgName: "ShadowPerson")
+                newPerson.position.y = screenHeight / 2
+                newPerson.xScale = 0.1
+                newPerson.yScale = 0.1
+                shadowPeople.append(newPerson)
+                self.addChild(newPerson)
+            }
+            else if self.nodeAtPoint(location).name == "SpawnInvincible" {
+                let newPerson = Enemy(type: "Enemy", defenseType: "Enemy", health: 10000000, speed: 10, gridX: 0, gridY: 10, x: Int(grid.locations[0][10].x), y: Int(grid.locations[0][10].y), imgName: "ShadowPerson")
+                newPerson.position.y = screenHeight / 2
+                newPerson.xScale = 0.1
+                newPerson.yScale = 0.1
+                shadowPeople.append(newPerson)
+                self.addChild(newPerson)
+            }
+            else if self.nodeAtPoint(location).name != "Level Label" {
                 /**
                  * Determines type of new tower
                  */
@@ -192,22 +223,28 @@ class LevelOne: SKScene {
                     curTowerType = self.nodeAtPoint(location).name!
                     if curTowerType == "Rock" {
                         curTowerIndex = rockTowers.indexOf(self.nodeAtPoint(location) as! Tower)!
+                        dragTower = true
                     }
                     else if curTowerType == "Water" {
                         curTowerIndex = waterTowers.indexOf(self.nodeAtPoint(location) as! Tower)!
+                        dragTower = true
                     }
                     else if curTowerType == "Air" {
                         curTowerIndex = airTowers.indexOf(self.nodeAtPoint(location) as! Tower)!
+                        dragTower = true
                     }
                     else if curTowerType == "Fire" {
                         curTowerIndex = fireTowers.indexOf(self.nodeAtPoint(location) as! Tower)!
+                        dragTower = true
                     }
-                    dragTower = true
                 }
                 else {
                     curTowerType = "nil"
                     curTowerIndex = -1
                 }
+            }
+            else {
+                dragTower = false
             }
         }
     }
@@ -239,86 +276,88 @@ class LevelOne: SKScene {
         /**
          * Alright here is where things get complicated
          */
-        for x in 0..<grid.locations.count {
-            for y in 0..<grid.locations[x].count {
-                /**
-                 * So as far as I can tell this is what this does:
-                 * • Determines type of the new Tower type
-                 * • Determines if there is an open space where the tower is dropped
-                 * • If there is an open space, break from search, signal a found open space, put the tower there
-                 */
-                if curTowerType == "Rock" {
-                    let close = nearestSpace("Rock")
-                    if Double(rockTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(rockTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
-                        rockTowers[curTowerIndex].position = grid.locations[close.x][close.y]
-                        grid.towerList[close.x][close.y] = true
-                        breakFromSearch = true
-                        foundOpenSpace = true
-                        break
+        if dragTower {
+            for x in 0..<grid.locations.count {
+                for y in 0..<grid.locations[x].count {
+                    /**
+                     * So as far as I can tell this is what this does:
+                     * • Determines type of the new Tower type
+                     * • Determines if there is an open space where the tower is dropped
+                     * • If there is an open space, break from search, signal a found open space, put the tower there
+                     */
+                    if curTowerType == "Rock" {
+                        let close = nearestSpace("Rock")
+                        if Double(rockTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(rockTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(rockTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
+                            rockTowers[curTowerIndex].position = grid.locations[close.x][close.y]
+                            grid.towerList[close.x][close.y] = true
+                            breakFromSearch = true
+                            foundOpenSpace = true
+                            break
+                        }
+                    }
+                    else if curTowerType == "Air" {
+                        let close = nearestSpace("Air")
+                        if Double(airTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(airTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(airTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(airTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
+                            airTowers[curTowerIndex].position = grid.locations[close.x][close.y]
+                            grid.towerList[close.x][close.y] = true
+                            breakFromSearch = true
+                            foundOpenSpace = true
+                            break
+                        }
+                    }
+                    else if curTowerType == "Water" {
+                        let close = nearestSpace("Water")
+                        if Double(waterTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(waterTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
+                            waterTowers[curTowerIndex].position = grid.locations[close.x][close.y]
+                            grid.towerList[close.x][close.y] = true
+                            breakFromSearch = true
+                            foundOpenSpace = true
+                            break
+                        }
+                    }
+                    else if curTowerType == "Fire" {
+                        let close = nearestSpace("Fire")
+                        if Double(fireTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(fireTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
+                            fireTowers[curTowerIndex].position = grid.locations[close.x][close.y]
+                            grid.towerList[close.x][close.y] = true
+                            breakFromSearch = true
+                            foundOpenSpace = true
+                            break
+                        }
                     }
                 }
-                else if curTowerType == "Air" {
-                    let close = nearestSpace("Air")
-                    if Double(airTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(airTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(airTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(airTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
-                        airTowers[curTowerIndex].position = grid.locations[close.x][close.y]
-                        grid.towerList[close.x][close.y] = true
-                        breakFromSearch = true
-                        foundOpenSpace = true
-                        break
-                    }
+                if breakFromSearch == true {
+                    breakFromSearch = false
+                    break
+                }
+            }
+            
+            /**
+             * If found open space, remove the rock from the parent and from the tower list
+             */
+            if foundOpenSpace == false {
+                if curTowerType == "Rock" {
+                    rockTowers[curTowerIndex].removeFromParent()
+                    rockTowers.removeAtIndex(curTowerIndex)
                 }
                 else if curTowerType == "Water" {
-                    let close = nearestSpace("Water")
-                    if Double(waterTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(waterTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(waterTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
-                        waterTowers[curTowerIndex].position = grid.locations[close.x][close.y]
-                        grid.towerList[close.x][close.y] = true
-                        breakFromSearch = true
-                        foundOpenSpace = true
-                        break
-                    }
+                    waterTowers[curTowerIndex].removeFromParent()
+                    waterTowers.removeAtIndex(curTowerIndex)
+                }
+                else if curTowerType == "Air" {
+                    airTowers[curTowerIndex].removeFromParent()
+                    airTowers.removeAtIndex(curTowerIndex)
                 }
                 else if curTowerType == "Fire" {
-                    let close = nearestSpace("Fire")
-                    if Double(fireTowers[curTowerIndex].position.x) - widthSep <= Double(grid.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.x) + widthSep >= Double(grid.locations[x][y].x) && Double(fireTowers[curTowerIndex].position.y) - widthSep <= Double(grid.locations[x][y].y) && Double(fireTowers[curTowerIndex].position.y) + widthSep >= Double(grid.locations[x][y].y) && grid.towerList[x][y] == false {
-                        fireTowers[curTowerIndex].position = grid.locations[close.x][close.y]
-                        grid.towerList[close.x][close.y] = true
-                        breakFromSearch = true
-                        foundOpenSpace = true
-                        break
-                    }
+                    fireTowers[curTowerIndex].removeFromParent()
+                    fireTowers.removeAtIndex(curTowerIndex)
                 }
             }
-            if breakFromSearch == true {
-                breakFromSearch = false
-                break
-            }
+            
+            foundOpenSpace = false
+            
+            dragTower = false
         }
-        
-        /**
-         * If found open space, remove the rock from the parent and from the tower list
-         */
-        if foundOpenSpace == false {
-            if curTowerType == "Rock" {
-                rockTowers[curTowerIndex].removeFromParent()
-                rockTowers.removeAtIndex(curTowerIndex)
-            }
-            else if curTowerType == "Water" {
-                waterTowers[curTowerIndex].removeFromParent()
-                waterTowers.removeAtIndex(curTowerIndex)
-            }
-            else if curTowerType == "Air" {
-                airTowers[curTowerIndex].removeFromParent()
-                airTowers.removeAtIndex(curTowerIndex)
-            }
-            else if curTowerType == "Fire" {
-                fireTowers[curTowerIndex].removeFromParent()
-                fireTowers.removeAtIndex(curTowerIndex)
-            }
-        }
-        
-        foundOpenSpace = false
-        
-        dragTower = false
     }
     
     override func update(currentTime: CFTimeInterval) {
