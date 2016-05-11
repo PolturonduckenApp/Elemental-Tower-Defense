@@ -13,7 +13,11 @@ import Foundation
 
 infix operator ** { associativity left precedence 170 }
 
-func ** (num: Double, power: Double) -> Double{
+func ** (num: Double, power: Double) -> Double {
+    return pow(num, power)
+}
+
+func ** (num: CGFloat, power: CGFloat) -> CGFloat {
     return pow(num, power)
 }
 
@@ -38,6 +42,7 @@ class LevelOne: SKScene {
     var foundOpenSpace = false
     
     var projectile : Projectile!
+    var spawnedProjectile = false
     
     var curTowerType : String = "" //Current new tower type
     
@@ -62,22 +67,19 @@ class LevelOne: SKScene {
         print(screenWidth)
         print(screenHeight)
         
-        let newNormalEnemy = SKLabelNode(fontNamed: "Chalkduster")
+        let newNormalEnemy = SKLabelNode(fontNamed: "Chalkduster") //Spawns new normal enemy
         newNormalEnemy.text = "Spawn Normal"
         newNormalEnemy.name = "SpawnNormal"
         newNormalEnemy.fontSize = 45
         newNormalEnemy.position = CGPoint(x: screenWidth * 1/4, y: screenHeight * 8/9)
-        self.addChild(newNormalEnemy)
         
-        let newInvincible = SKLabelNode(fontNamed: "Chalkduster")
+        let newInvincible = SKLabelNode(fontNamed: "Chalkduster") //Spanws new invincible enemy
         newInvincible.text = "Spawn Invincible"
         newInvincible.name = "SpawnInvincible"
         newInvincible.fontSize = 45
         newInvincible.position = CGPoint(x: screenWidth * 3/4, y: screenHeight * 8/9)
-        self.addChild(newInvincible)
         
-        //Level One Title
-        let levelOneLabel = SKLabelNode(fontNamed: "Chalkduster")
+        let levelOneLabel = SKLabelNode(fontNamed: "Chalkduster") //Level One label
         levelOneLabel.text = "Level One"
         levelOneLabel.name = "Level Label"
         levelOneLabel.fontSize = 45
@@ -100,6 +102,7 @@ class LevelOne: SKScene {
         
         grid = Grid(locations: locations) //Sets up grid pt. 2
         
+        //Shorthand method of setting up a path
         shortPath.append(ShortPath(x: 0, y: 10, number: 5))
         shortPath.append(ShortPath(x: 4, y: 11, number: 1))
         shortPath.append(ShortPath(x: 4, y: 12, number: 8))
@@ -138,6 +141,8 @@ class LevelOne: SKScene {
         self.addChild(mainWater)
         self.addChild(mainFire)
         self.addChild(levelOneLabel)
+        self.addChild(newNormalEnemy)
+        self.addChild(newInvincible)
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -149,12 +154,11 @@ class LevelOne: SKScene {
              * • Creates a new tower and adds it to the list
              * • Sets up other necessary variables
              */
-            print(self.nodeAtPoint(location).name)
             if self.nodeAtPoint(location).name == "Main Rock" {
-                let newTower = Tower(element: "Rock", range: 100, power: 10, rate: 10, towerType: "turret", x: 0, y: 0, img: "Rock")
-                rockTowers.append(newTower)
-                self.addChild(newTower)
-                newTower.position = touch.locationInNode(self)
+                let newTower = Tower(element: "Rock", range: 100, power: 10, rate: 10, towerType: "turret", x: 0, y: 0, img: "Rock") //Sets up new tower
+                rockTowers.append(newTower) //Adds it to the tower list
+                self.addChild(newTower) //Puts it on the screen
+                newTower.position = touch.locationInNode(self) //Places it where the user touched
                 newTower.name = "Rock"
                 dragTower = true
                 curTowerType = "Rock"
@@ -199,20 +203,80 @@ class LevelOne: SKScene {
                 newTower.yScale = 0.5
             }
             else if self.nodeAtPoint(location).name == "SpawnNormal" {
-                let newPerson = Enemy(type: "Enemy", defenseType: "Enemy", health: 100, speed: 10, gridX: 0, gridY: 10, x: Int(grid.locations[0][10].x), y: Int(grid.locations[0][10].y), imgName: "ShadowPerson")
-                newPerson.position.y = screenHeight / 2
-                newPerson.xScale = 0.1
-                newPerson.yScale = 0.1
-                shadowPeople.append(newPerson)
-                self.addChild(newPerson)
+                dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)) { [unowned self] in //Sets up new thread
+                    let person = Enemy(type: "Enemy", defenseType: "Enemy", health: 100, speed: 10, gridX: 0, gridY: 10, x: Int(self.grid.locations[0][10].x), y: Int(self.grid.locations[0][10].y), imgName: "ShadowPerson") //Sets up new enemy with normal health
+                    person.position.y = self.screenHeight / 2 //Half the screen height
+                    person.xScale = 0.1
+                    person.yScale = 0.1
+                    self.shadowPeople.append(person)
+                    self.addChild(person)
+                    
+                    while true { //Keep going until the enemy dies or goes off the screen
+                        if person.position.x > self.screenWidth { //If the enemy is off the screen
+                            self.shadowPeople.removeAtIndex(self.shadowPeople.indexOf(person)!) //Remove the enemy
+                            person.removeFromParent()
+                            break //Break from the while true loop and end the thread
+                        }
+                        else {
+                            for paths in self.path { //Loop through each path tile to see which one the enemy goes to next
+                                if paths.xLoc == person.gridX && paths.yLoc == person.gridY && paths.forward != nil { //If this tile is the one the enemy is on, AND the next tile exists
+                                    person.gridX = paths.forward.xLoc //Set the person to be on the next tile
+                                    person.gridY = paths.forward.yLoc
+                                    let time = person.moveTo(paths.forward.position.x, y: paths.forward.position.y, speed: 100) //Move to the next tile
+                                    usleep(UInt32(time * 1000000)) //Wait until the enemy has moved to the next tile
+                                    break
+                                }
+                                else if paths.forward == nil { //Otherwise if there is no next tile
+                                    person.health = -1 //Kill the enemy
+                                }
+                            }
+                        }
+                        
+                        if person.health <= 0 { //If the enemy is dead
+                            self.shadowPeople.removeAtIndex(self.shadowPeople.indexOf(person)!) //Remove the enemy
+                            person.removeFromParent()
+                            break //Break from the while true loop and end the thread
+                        }
+                    }
+                }
             }
             else if self.nodeAtPoint(location).name == "SpawnInvincible" {
-                let newPerson = Enemy(type: "Enemy", defenseType: "Enemy", health: 10000000, speed: 10, gridX: 0, gridY: 10, x: Int(grid.locations[0][10].x), y: Int(grid.locations[0][10].y), imgName: "ShadowPerson")
-                newPerson.position.y = screenHeight / 2
-                newPerson.xScale = 0.1
-                newPerson.yScale = 0.1
-                shadowPeople.append(newPerson)
-                self.addChild(newPerson)
+                dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)) { [unowned self] in //Sets up new thread
+                    let person = Enemy(type: "Enemy", defenseType: "Enemy", health: 10000000, speed: 10, gridX: 0, gridY: 10, x: Int(self.grid.locations[0][10].x), y: Int(self.grid.locations[0][10].y), imgName: "ShadowPerson")
+                    person.position.y = self.screenHeight / 2
+                    person.xScale = 0.1
+                    person.yScale = 0.1
+                    self.shadowPeople.append(person)
+                    self.addChild(person)
+                    
+                    while true { //Keep going until the enemy dies or goes off the screen
+                        if person.position.x > self.screenWidth { //If the enemy is off the screen
+                            self.shadowPeople.removeAtIndex(self.shadowPeople.indexOf(person)!) //Remove the enemy
+                            person.removeFromParent()
+                            break //Break from the while true loop and end the thread
+                        }
+                        else {
+                            for paths in self.path { //Loop through each path tile to see which one the enemy goes to next
+                                if paths.xLoc == person.gridX && paths.yLoc == person.gridY && paths.forward != nil { //If this tile is the one the enemy is on, AND the next tile exists
+                                    person.gridX = paths.forward.xLoc //Set the person to be on the next tile
+                                    person.gridY = paths.forward.yLoc
+                                    let time = person.moveTo(paths.forward.position.x, y: paths.forward.position.y, speed: 100) //Move to the next tile
+                                    usleep(UInt32(time * 1000000)) //Wait until the enemy has moved to the next tile
+                                    break
+                                }
+                                else if paths.forward == nil { //Otherwise if there is no next tile
+                                    person.health = -1 //Kill the enemy
+                                }
+                            }
+                        }
+                        
+                        if person.health <= 0 { //If the enemy is dead
+                            self.shadowPeople.removeAtIndex(self.shadowPeople.indexOf(person)!) //Remove the enemy
+                            person.removeFromParent()
+                            break //Break from the while true loop and end the thread
+                        }
+                    }
+                }
             }
             else if self.nodeAtPoint(location).name != "Level Label" {
                 /**
@@ -395,50 +459,65 @@ class LevelOne: SKScene {
         if elapsedTime >= 1 {
             startTime = curTime
             if countDown >= 0 {
-                let newPerson = Enemy(type: "Enemy", defenseType: "Enemy", health: 100, speed: 10, gridX: 0, gridY: 10, x: Int(grid.locations[0][10].x), y: Int(grid.locations[0][10].y), imgName: "ShadowPerson")
-                newPerson.position.y = screenHeight / 2
-                newPerson.xScale = 0.1
-                newPerson.yScale = 0.1
-                shadowPeople.append(newPerson)
-                self.addChild(newPerson)
-                countDown = countDown - 1
-            }
-            
-            for person in shadowPeople {
-                if person.position.x > screenWidth {
-                    shadowPeople.removeAtIndex(shadowPeople.indexOf(person)!)
-                    person.removeFromParent()
-                }
-                else {
-                    for paths in path {
-                        if paths.xLoc == person.gridX && paths.yLoc == person.gridY && paths.forward != nil {
-                            person.gridX = paths.forward.xLoc
-                            person.gridY = paths.forward.yLoc
-                            person.position = grid.locations[person.gridX][person.gridY]
-                            break
+                //Uh oh
+                dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)) { [unowned self] in //Sets up new thread
+                    let person = Enemy(type: "Enemy", defenseType: "Enemy", health: 100, speed: 10, gridX: 0, gridY: 10, x: Int(self.grid.locations[0][10].x), y: Int(self.grid.locations[0][10].y), imgName: "ShadowPerson") //Creates new enemy
+                    person.position.y = self.screenHeight / 2
+                    person.xScale = 0.1
+                    person.yScale = 0.1
+                    self.shadowPeople.append(person)
+                    self.addChild(person)
+                    self.countDown = self.countDown - 1
+                    
+                    while true { //Keep going until the enemy dies or goes off the screen
+                        if person.position.x > self.screenWidth { //If the enemy is off the screen
+                            self.shadowPeople.removeAtIndex(self.shadowPeople.indexOf(person)!) //Remove the enemy
+                            person.removeFromParent()
+                            break //Break from the while true loop and end the thread
+                        }
+                        else {
+                            for paths in self.path { //Loop through each path tile to see which one the enemy goes to next
+                                if paths.xLoc == person.gridX && paths.yLoc == person.gridY && paths.forward != nil { //If this tile is the one the enemy is on, AND the next tile exists
+                                    person.gridX = paths.forward.xLoc //Set the person to be on the next tile
+                                    person.gridY = paths.forward.yLoc
+                                    let time = person.moveTo(paths.forward.position.x, y: paths.forward.position.y, speed: 100) //Move to the next tile
+                                    usleep(UInt32(time * 1000000)) //Wait until the enemy has moved to the next tile
+                                    break
+                                }
+                                else if paths.forward == nil { //Otherwise if there is no next tile
+                                    person.health = -1 //Kill the enemy
+                                }
+                            }
+                        }
+                        
+                        if person.health <= 0 { //If the enemy is dead
+                            self.shadowPeople.removeAtIndex(self.shadowPeople.indexOf(person)!) //Remove the enemy
+                            person.removeFromParent()
+                            break //Break from the while true loop and end the thread
                         }
                     }
                 }
-                
-                if person.health <= 0 {
-                    shadowPeople.removeAtIndex(shadowPeople.indexOf(person)!)
-                    person.removeFromParent()
-                }
-                
-                for tow in rockTowers {
-                    if inVicinity(person, tower: tow) {
-                        person.health = person.health - 50
-                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.xLoc), dy: person.position.y - CGFloat(tow.yLoc)), image: "Spaceship")
+            }
+            spawnedProjectile = false
+        }
+        
+        if elapsedTime >= 0.5 && spawnedProjectile == false { //Every half of a second
+            for person in shadowPeople { //Loop through each person
+                for tow in rockTowers { //Loop through each tower
+                    if inVicinity(person, tower: tow) { //If there is a person in the range of the tower
+                        person.health = person.health - tow.power //Hurt the enemy
+                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.xLoc), dy: person.position.y - CGFloat(tow.yLoc)), image: "Spaceship") //Spawns a new projectile
                         
-                        projectile.position.x = tow.position.x
+                        projectile.position.x = tow.position.x //Sets the projectile position to be at the tower position
                         projectile.position.y = tow.position.y
                         
-                        projectile.rotate(person, tower: tow)
+                        projectile.rotate(person, tower: tow) //Rotate the projectile to be facing the enemy
+                        tow.rotate(person, tower: tow)
                         
-                        projectile.size.width = 20
+                        projectile.size.width = 20 //Reduce the size of the projectile
                         projectile.size.width = 20
                         
-                        projectiles.append(projectile)
+                        projectiles.append(projectile) //Add it to the list of all projectiles
                         self.addChild(projectile)
                     }
                 }
@@ -452,6 +531,7 @@ class LevelOne: SKScene {
                         projectile.position.y = tow.position.y
                         
                         projectile.rotate(person, tower: tow)
+                        tow.rotate(person, tower: tow)
                         
                         projectile.size.width = 20
                         projectile.size.width = 20
@@ -470,6 +550,7 @@ class LevelOne: SKScene {
                         projectile.position.y = tow.position.y
                         
                         projectile.rotate(person, tower: tow)
+                        tow.rotate(person, tower: tow)
                         
                         projectile.size.width = 20
                         projectile.size.width = 20
@@ -488,6 +569,7 @@ class LevelOne: SKScene {
                         projectile.position.y = tow.position.y
                         
                         projectile.rotate(person, tower: tow)
+                        tow.rotate(person, tower: tow)
                         
                         projectile.size.width = 20
                         projectile.size.width = 20
@@ -497,79 +579,31 @@ class LevelOne: SKScene {
                     }
                 }
             }
+            spawnedProjectile = true
         }
-        else if elapsedTime >= 0.5 {
-            for person in shadowPeople {
-                for tow in rockTowers {
-                    if inVicinity(person, tower: tow) {
-                        person.health = person.health - 50
-                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.xLoc), dy: person.position.y - CGFloat(tow.yLoc)), image: "Spaceship")
-                        
-                        projectile.position.x = tow.position.x
-                        projectile.position.y = tow.position.y
-                        
-                        projectile.rotate(person, tower: tow)
-                        
-                        projectile.size.width = 20
-                        projectile.size.width = 20
-                        
-                        projectiles.append(projectile)
-                        self.addChild(projectile)
-                    }
+        
+        for person in shadowPeople { //Loop through each person
+            for tow in rockTowers { //Loop through each tower
+                if inVicinity(person, tower: tow) { //If there is a person in the range of the tower
+                    tow.rotate(person, tower: tow)
                 }
-                
-                for tow in waterTowers {
-                    if inVicinity(person, tower: tow) {
-                        person.health = person.health - 50
-                        let projectile = Projectile(speed: 1, power: 100, direction: CGVector(dx: (person.position.x - CGFloat(tow.position.x)) / 20, dy: (person.position.y - CGFloat(tow.position.y)) / 20), image: "Spaceship")
-                        
-                        projectile.position.x = tow.position.x
-                        projectile.position.y = tow.position.y
-                        
-                        projectile.rotate(person, tower: tow)
-                        
-                        projectile.size.width = 20
-                        projectile.size.width = 20
-                        
-                        projectiles.append(projectile)
-                        self.addChild(projectile)
-                    }
+            }
+            
+            for tow in waterTowers {
+                if inVicinity(person, tower: tow) {
+                    tow.rotate(person, tower: tow)
                 }
-                
-                for tow in airTowers {
-                    if inVicinity(person, tower: tow) {
-                        person.health = person.health - 50
-                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.xLoc), dy: person.position.y - CGFloat(tow.yLoc)), image: "Spaceship")
-                        
-                        projectile.position.x = tow.position.x
-                        projectile.position.y = tow.position.y
-                        
-                        projectile.rotate(person, tower: tow)
-                        
-                        projectile.size.width = 20
-                        projectile.size.width = 20
-                        
-                        projectiles.append(projectile)
-                        self.addChild(projectile)
-                    }
+            }
+            
+            for tow in airTowers {
+                if inVicinity(person, tower: tow) {
+                    tow.rotate(person, tower: tow)
                 }
-                
-                for tow in fireTowers {
-                    if inVicinity(person, tower: tow) {
-                        person.health = person.health - 50
-                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: person.position.x - CGFloat(tow.xLoc), dy: person.position.y - CGFloat(tow.yLoc)), image: "Spaceship")
-                        
-                        projectile.position.x = tow.position.x
-                        projectile.position.y = tow.position.y
-                        
-                        projectile.rotate(person, tower: tow)
-                        
-                        projectile.size.width = 20
-                        projectile.size.width = 20
-                        
-                        projectiles.append(projectile)
-                        self.addChild(projectile)
-                    }
+            }
+            
+            for tow in fireTowers {
+                if inVicinity(person, tower: tow) {
+                    tow.rotate(person, tower: tow)
                 }
             }
         }
