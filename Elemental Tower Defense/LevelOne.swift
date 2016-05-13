@@ -21,7 +21,7 @@ func ** (num: CGFloat, power: CGFloat) -> CGFloat {
     return pow(num, power)
 }
 
-class LevelOne: SKScene {
+class LevelOne: SKScene, SKPhysicsContactDelegate {
     //Determining screen size
     let screenSize: CGRect = UIScreen.mainScreen().bounds
     var screenWidth : CGFloat = 0
@@ -61,6 +61,8 @@ class LevelOne: SKScene {
     var countDown = 10
     
     override func didMoveToView(view: SKView) {
+        physicsWorld.contactDelegate = self
+        
         //Determines screen size
         screenWidth = screenSize.width
         screenHeight = screenSize.height
@@ -135,6 +137,7 @@ class LevelOne: SKScene {
         mainFire.position.x = 700
         mainFire.position.y = 100
         mainFire.name = "Main Fire"
+        mainFire.physicsBody = SKPhysicsBody(rectangleOfSize: mainFire.size)
         
         self.addChild(mainRock)
         self.addChild(mainAir)
@@ -439,7 +442,7 @@ class LevelOne: SKScene {
     
     func updateProjectile(index: Int) {
         let gee = Double(projectiles[index].direction.dx)**2 + Double(projectiles[index].direction.dy)**2
-        
+        print(projectiles[index].speed)
         projectiles[index].position.y += ((projectiles[index].direction.dy) * (CGFloat(gee) + projectiles[index].speed))/CGFloat(gee)
         projectiles[index].position.x += ((projectiles[index].direction.dx) * (CGFloat(gee) + projectiles[index].speed))/CGFloat(gee)
         
@@ -525,7 +528,7 @@ class LevelOne: SKScene {
                 for tow in waterTowers {
                     if inVicinity(person, tower: tow) {
                         person.health = person.health - 50
-                        let projectile = Projectile(speed: 1, power: 100, direction: CGVector(dx: (person.position.x - CGFloat(tow.position.x)) / 20, dy: (person.position.y - CGFloat(tow.position.y)) / 20), image: "Spaceship")
+                        let projectile = Projectile(speed: 100, power: 100, direction: CGVector(dx: (person.position.x - CGFloat(tow.position.x)) / 20, dy: (person.position.y - CGFloat(tow.position.y)) / 20), image: "Spaceship")
                         
                         projectile.position.x = tow.position.x
                         projectile.position.y = tow.position.y
